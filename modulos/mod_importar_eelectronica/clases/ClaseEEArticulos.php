@@ -29,21 +29,38 @@ class ClaseEEArticulos extends ModeloP {
     }
 
     public static function importar($ficherosql) {
+        $ruta = '/var/www/html/tpvfox/BD/importar_eelectronica/';
+        $contador = 1;
         if (file_exists($ficherosql)) {
             ClaseEEArticulos::limpia();
             $fichero = fopen($ficherosql, 'r');
-            while ($linea = fgets($fichero)) {
-                $lineanueva = str_replace('Articulos', ClaseEEArticulos::$tabla, $linea);
-                ClaseEEArticulos::_consultaDML($lineanueva);
+            $fichero2 = fopen($ruta . 'art' . time(), 'w');
+
+            $linea = fgets($fichero);
+            while ($linea) {
+                $lineanueva = $linea;
+                $linea = fgets($fichero);
+
+                while ($linea && (strpos($linea, 'INSERT INTO') == 0)) {
+                    $lineanueva .= $linea;
+                    $linea = fgets($fichero);
+                }
+                if ($lineanueva) {
+                    $lineawrite = str_replace('Articulos', ClaseEEArticulos::$tabla, $lineanueva);
+                    ClaseEEArticulos::_consultaDML($lineawrite);
+                    fputs($fichero2, $contador++ . $lineawrite);
+                }
             }
+            return 'tudo ben';
         }
+        return $ficherosql;
     }
 
-    public static function QuitaIva($coniva, $iva){
-        return $coniva / (1+($iva/100));
+    public static function QuitaIva($coniva, $iva) {
+        return $coniva / (1 + ($iva / 100));
     }
 
-        public static function fusionar() {
+    public static function fusionar() {
         $articulos = self::leer();
         $idTienda = 1;
         $errores = [];
@@ -65,20 +82,20 @@ class ClaseEEArticulos extends ModeloP {
                                 'idVirtuemart' => '0',
                                 'estado' => 'eeok'
                             ])) {
-                        $errores[] = ['insert artT',$articuloEE['Art'], alArticulosTienda::getErrorConsulta()];
+                        $errores[] = ['insert artT', $articuloEE['Art'], alArticulosTienda::getErrorConsulta()];
                     }
                     alArticulosPrecios::insert([
                         'idArticulo' => $nuevoid,
                         'idTienda' => $idTienda,
                         'pvpCiva' => $articuloEE['pvp'],
-                        'pvpSiva' => self::QuitaIva($articuloEE['pvp'],$articuloEE['iva'])
+                        'pvpSiva' => self::QuitaIva($articuloEE['pvp'], $articuloEE['iva'])
                     ]);
                 } else {
-                    $errores[] = ['existe cref',$articuloEE['Art'], alArticulos::getErrorConsulta()];
+                    $errores[] = ['existe cref', $articuloEE['Art'], alArticulos::getErrorConsulta()];
                 }
             } else {
                 if (!alArticulos::actualizar($idArticuloTienda, $datos)) {
-                    $errores[] = ['ac art',$idArticuloTienda, $articuloEE['Art']];
+                    $errores[] = ['ac art', $idArticuloTienda, $articuloEE['Art']];
                 } else {
                     alArticulosPrecios::update(
                             $idArticuloTienda, $idTienda, ['pvpCiva' => $articuloEE['pvp']]

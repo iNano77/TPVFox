@@ -27,4 +27,8 @@
 include_once $ruta.'/inicial.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEEArticulos.php';
 
-var_dump(ClaseEEArticulos::fusionar());
+
+var_dump(ClaseEEArticulos::importar('/var/www/html/tpvfox/BD/importar_eelectronica/csv/articulos_1538936061.sql'));
+
+
+//var_dump(ClaseEEArticulos::fusionar());

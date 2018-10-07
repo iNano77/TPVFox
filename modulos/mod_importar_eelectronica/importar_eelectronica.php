@@ -26,7 +26,7 @@ if (isset($argc)) {
         if (strpos($fichero, 'articulos') !== FALSE) {
             echo 'articulos';
             $resultado = ClaseEEArticulos::importar($ficherosql);
-            ClaseEEArticulos::fusionar();
+//            ClaseEEArticulos::fusionar();
             
         } elseif (strpos($fichero, 'categorias') !== FALSE) {
             echo ' categorias ';
@@ -38,7 +38,7 @@ if (isset($argc)) {
         } else {
             echo 'No ha funcionado';
         }
-        rename($ficherosql, $URLCom . '/BD/importar_eelectronica/procesados/csv/' . $fichero);
+//        rename($ficherosql, $URLCom . '/BD/importar_eelectronica/procesados/csv/' . $fichero);
         
     } else {
         echo $ruta . '--No ha pasado--' . $fichero;
