@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modulo nombre="mod_importar_eelectronica" descripcion="Familias" permiso="1">
+    <vista nombre="importar_eelectronica.php" descripcion="Listado Familias" permiso="0"> </vista>
+    <vista nombre="fusionar_eelectronica.php" descripcion="fusionar articulos ee" permiso="0"> </vista>
+</modulo>
