@@ -72,7 +72,7 @@ class ClaseEEArticulos extends ModeloP {
                 'estado' => 'importado'
             ];
             $idArticuloTienda = alArticulosTienda::existeCRef($articuloEE['Art']);
-            if (!$idArticuloTienda) {
+            if (!$idArticuloTienda) {                
                 $nuevoid = alArticulos::insertar($datos);
                 if ($nuevoid) {
                     $idArticuloTienda = $nuevoid;
@@ -95,6 +95,8 @@ class ClaseEEArticulos extends ModeloP {
                     $errores[] = ['existe cref', $articuloEE['Art'], alArticulos::getErrorConsulta()];
                 }
             } else {
+                
+                $articulotpv = alArticulos::leerArticuloTienda($idArticuloTienda, $idTienda);
                 if (!alArticulos::actualizar($idArticuloTienda, $datos)) {
                     $errores[] = ['ac art', $idArticuloTienda, $articuloEE['Art']];
                 } else {
@@ -111,7 +113,6 @@ class ClaseEEArticulos extends ModeloP {
     }
 
     public static function leer() {
-
         return self::_leer(self::$tabla);
     }
 

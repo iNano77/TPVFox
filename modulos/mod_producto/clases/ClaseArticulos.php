@@ -50,6 +50,22 @@ class alArticulos extends Modelo { // hereda de clase modelo. Hay una clase arti
         return $resultado['datos'][0]['contador'];
     }
 
+    public static function leerArticuloTienda($idArticuloTienda, $idTienda){
+        $sql = 'SELECT art.idArticulo, '
+                . ', art.iva as ivaArticulo '
+                . ', art.articulo_name as descripcion '
+                . ', pre.pvpCiva'
+                . ' FROM articulos AS art '
+                . ' LEFT OUTER JOIN articulosPrecios AS pre ON (art.idArticulo=pre.idArticulo) '
+                . ' LEFT OUTER JOIN articulosStocks AS stoc ON (art.idArticulo=stoc.idArticulo) '
+                . ' WHERE art.idArticulo =' . $idArticulo
+                . ' AND pre.idTienda= ' . $idTienda
+                . ' AND stoc.idTienda= ' . $idTienda
+                . ' LIMIT 1';
+        return ModeloP::_consulta($sql);
+        
+    }
+    
     public function leerPrecio($idArticulo, $idTienda = 1) {
         $sql = 'SELECT pre.* '
                 . ', art.iva as ivaArticulo '
