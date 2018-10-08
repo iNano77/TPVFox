@@ -6,13 +6,13 @@
  * @Autor Alberto Lago Rodríguez. Alagoro. alberto arroba alagoro punto com
  * @Descripción	
  */
-	$ruta = '/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/public/tpvfox';
-	if (!file_exists($ruta.'/inicialCLI.php')){		
-  	  $ruta = '/var/www/html/tpvfox';
+	$camino = '/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/public/tpvfox';
+	if (!file_exists($camino.'/inicialCLI.php')){		
+  	  $camino = '/var/www/html/tpvfox';
         }
 
 
-include_once $ruta.'/inicialCLI.php';
+include_once $camino.'/inicialCLI.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEEArticulos.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEECategorias.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEEDtoCliente.php';
@@ -25,20 +25,20 @@ if (isset($argc)) {
         $ficherosql = $ruta . '/' . $fichero;
         if (strpos($fichero, 'articulos') !== FALSE) {
             echo 'articulos';
-            $resultado = ClaseEEArticulos::importar($ficherosql);
-//            ClaseEEArticulos::fusionar();
+            $resultado = ClaseEEArticulos::importar($ficherosql, $ruta);
+            ClaseEEArticulos::fusionar();
             
         } elseif (strpos($fichero, 'categorias') !== FALSE) {
             echo ' categorias ';
-            ClaseEECategorias::importar($ficherosql);
+            ClaseEECategorias::importar($ficherosql, $ruta);
         } elseif (strpos($fichero, 'dtocliente') !== FALSE) {
-            ClaseEEDtoCliente::importar($ficherosql);
+            ClaseEEDtoCliente::importar($ficherosql, $ruta);
         } elseif (strpos($fichero, 'familiadto') !== FALSE) {
-            ClaseEEFamiliaDto::importar($ficherosql);            
+            ClaseEEFamiliaDto::importar($ficherosql, $ruta);            
         } else {
             echo 'No ha funcionado';
         }
-//        rename($ficherosql, $URLCom . '/BD/importar_eelectronica/procesados/csv/' . $fichero);
+        rename($ficherosql, $URLCom . '/BD/importar_eelectronica/procesados/csv/' . $fichero);
         
     } else {
         echo $ruta . '--No ha pasado--' . $fichero;

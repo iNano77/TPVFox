@@ -28,32 +28,33 @@ class ClaseEEArticulos extends ModeloP {
         return self::_consultaDML($sql);
     }
 
-    public static function importar($ficherosql) {
-        $ruta = '/var/www/html/tpvfox/BD/importar_eelectronica/';
-        $contador = 1;
+    public static function importar($ficherosql, $ruta) {
+        $contador = 0;
         if (file_exists($ficherosql)) {
             ClaseEEArticulos::limpia();
             $fichero = fopen($ficherosql, 'r');
-            $fichero2 = fopen($ruta . 'art' . time(), 'w');
-
+            $fichero2 = fopen($ruta.'/error/' . 'art' . time(), 'w');
             $linea = fgets($fichero);
             while ($linea) {
                 $lineanueva = $linea;
                 $linea = fgets($fichero);
-
-                while ($linea && (strpos($linea, 'INSERT INTO') == 0)) {
+                while ($linea && (strpos($linea, 'INSERT INTO') === false)) {
                     $lineanueva .= $linea;
                     $linea = fgets($fichero);
                 }
                 if ($lineanueva) {
                     $lineawrite = str_replace('Articulos', ClaseEEArticulos::$tabla, $lineanueva);
-                    ClaseEEArticulos::_consultaDML($lineawrite);
-                    fputs($fichero2, $contador++ . $lineawrite);
+                    $error = ClaseEEArticulos::_consultaDML($lineawrite);
+                    if (ClaseEEArticulos::hayErrorConsulta()) {
+                        fputs($fichero2, ClaseEEArticulos::getSQLConsulta() );
+                        fputs($fichero2, ClaseEEArticulos::getErrorConsulta());
+                        $contador++;
+                    }                    
                 }
             }
-            return 'tudo ben';
+            return ($contador);
         }
-        return $ficherosql;
+        return false;
     }
 
     public static function QuitaIva($coniva, $iva) {

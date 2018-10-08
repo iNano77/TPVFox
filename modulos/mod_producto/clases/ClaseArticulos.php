@@ -19,6 +19,8 @@ class alArticulos extends Modelo { // hereda de clase modelo. Hay una clase arti
 //    Si no se lee articulo por id, se leen múltiples articulos $pagina o menos
 // empezando en $inicio 
 
+    protected static $mitabla = 'articulos';
+    
     public function leer($idArticulo = 0, $inicio = 1, $pagina = 100) {
         $sql = 'SELECT * '
                 . 'FROM articulos ';
@@ -310,4 +312,14 @@ class alArticulos extends Modelo { // hereda de clase modelo. Hay una clase arti
         return $resultado;
     }
 
+    public static function insertar($datos, $soloSQL=FALSE){
+        $resultado = parent::_insert(self::$mitabla, $datos,$soloSQL);
+        return $resultado;
+    }
+
+    public static function actualizar($idArticulo,$datos,$soloSQL=false){
+        $resultado = parent::_update(self::$mitabla, $datos,['idArticulo='.$idArticulo],$soloSQL);
+        return $resultado;
+    }
+    
 }
