@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * Copyright (C) 2018 alagoro
  *
  * This program is free software; you can redistribute it and/or
@@ -18,17 +18,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+trait CalcularMD5 {
 
-	$ruta = '/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/public/tpvfox';
-	if (!file_exists($ruta.'/inicial.php')){		
-  	  $ruta = '/var/www/html/tpvfox';
+    /**
+     * 
+     * Calcula el MD5 de los elementos concatenados.
+     * recibe un array. Si lo que recibe es un string
+     * se convierte en un array
+     * 
+     * @param array $elementos
+     * @return string
+     */
+    public function calcularMD5($elementos) {
+        $suma = '';
+        if (!is_array($elementos)) {
+            $elementos = [$elementos];
         }
+        foreach ($elementos as $elemento) {
+            $suma .= $elemento;
+        }
+        return md5($suma);
+    }
 
-include_once $ruta.'/inicial.php';
-include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEEArticulos.php';
-
-
-//var_dump(ClaseEEArticulos::importar('/var/www/html/tpvfox/BD/importar_eelectronica/csv/articulos_1539213135.sql','/var/www/html/tpvfox'));
-
-
-var_dump(ClaseEEArticulos::fusionar());
+}
