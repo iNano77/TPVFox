@@ -786,21 +786,6 @@ CREATE TABLE `iva` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `migraciones`
---
-
-DROP TABLE IF EXISTS `migraciones`;
-CREATE TABLE `migraciones` (
-  `version` bigint(20) NOT NULL,
-  `migration_name` varchar(100) DEFAULT NULL,
-  `start_time` timestamp NULL DEFAULT NULL,
-  `end_time` timestamp NULL DEFAULT NULL,
-  `breakpoint` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `modulos_configuracion`
 --
 
@@ -1510,12 +1495,6 @@ ALTER TABLE `indices`
 --
 ALTER TABLE `iva`
   ADD PRIMARY KEY (`idIva`);
-
---
--- Indices de la tabla `migraciones`
---
-ALTER TABLE `migraciones`
-  ADD PRIMARY KEY (`version`);
 
 --
 -- Indices de la tabla `modulo_etiquetado`
