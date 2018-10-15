@@ -23,14 +23,16 @@ if (isset($argc)) {
     $fichero = $argv[2];
     if ($ruta && $fichero) {
         $ficherosql = $ruta . '/' . $fichero;
-        if (strpos($fichero, 'articulos') !== FALSE) {
+        if (strpos($fichero, 'categorias') !== FALSE) {
+            echo ' categorias ';
+            $resultado = ClaseEECategorias::importar($ficherosql, $ruta);
+            ClaseEECategorias::fusionar();
+        }
+         elseif (strpos($fichero, 'articulos') !== FALSE) {
             echo 'articulos';
             $resultado = ClaseEEArticulos::importar($ficherosql, $ruta);
             ClaseEEArticulos::fusionar();
             
-        } elseif (strpos($fichero, 'categorias') !== FALSE) {
-            echo ' categorias ';
-            ClaseEECategorias::importar($ficherosql, $ruta);
         } elseif (strpos($fichero, 'dtocliente') !== FALSE) {
             ClaseEEDtoCliente::importar($ficherosql, $ruta);
         } elseif (strpos($fichero, 'familiadto') !== FALSE) {
@@ -38,10 +40,10 @@ if (isset($argc)) {
         } else {
             echo 'No ha funcionado';
         }
-        rename($ficherosql, $URLCom . '/BD/importar_eelectronica/procesados/csv/' . $fichero);
+//        rename($ficherosql, $URLCom . '/BD/importar_eelectronica/procesados/csv/' . $fichero);
         
     } else {
         echo $ruta . '--No ha pasado--' . $fichero;
     }
-    
+    return $resultado;
 }

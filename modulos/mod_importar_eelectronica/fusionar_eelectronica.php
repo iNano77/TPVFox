@@ -26,9 +26,10 @@
 
 include_once $ruta.'/inicial.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEEArticulos.php';
+include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEECategorias.php';
 
 
-//var_dump(ClaseEEArticulos::importar('/var/www/html/tpvfox/BD/importar_eelectronica/csv/articulos_1539213135.sql','/var/www/html/tpvfox'));
+//var_dump(ClaseEECategorias::importar('/var/www/html/tpvfox/BD/importar_eelectronica/csv/categorias_1539541752.sql','/var/www/html/tpvfox'));
 
 
 var_dump(ClaseEEArticulos::fusionar());

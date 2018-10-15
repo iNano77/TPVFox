@@ -14,13 +14,20 @@ include_once 'ClaseArticulosStocks.php';
  *
  * @author alagoro
  */
+// hereda de clase modelo. Hay una clase articulos que hizo Ricardo & Co.
 class alArticulos extends Modelo
-{ // hereda de clase modelo. Hay una clase articulos que hizo Ricardo & Co.
-//    Si no se lee articulo por id, se leen múltiples articulos $pagina o menos
-// empezando en $inicio 
+{ 
 
     protected static $mitabla = 'articulos';
 
+/**
+ * Si no se lee articulo por id, se leen múltiples articulos $pagina o menos
+ * empezando en $inicio 
+ * @param int $idArticulo
+ * @param int $inicio
+ * @param int $pagina equivalente a offset
+ * @return array or false
+ */
     public function leer($idArticulo = 0, $inicio = 1, $pagina = 100)
     {
         $sql = 'SELECT * '
@@ -333,7 +340,7 @@ class alArticulos extends Modelo
 
     public static function grabarArticuloFamilia($idarticulo, $idfamilia)
     {
-        $resultado = parent::_insert('articulosFamilias', ['idFamilia => ' . $idfamilia, 'idArticulo=>' . $idarticulo]);
+        $resultado = parent::_insert('articulosFamilias', ['idFamilia '=> $idfamilia, 'idArticulo'=> $idarticulo]);
 
         return $resultado;
     }
