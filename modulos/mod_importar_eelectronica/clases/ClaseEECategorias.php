@@ -64,9 +64,11 @@ class ClaseEECategorias extends ModeloP
                     if (!alFamiliasTienda::insert([
                             'idFamilia' => $idfamiliasTienda,
                             'idTienda' => $idTienda,
+                            'idFamilia_tienda' => '0',
                             'crefTienda' => $categoriaEE['Cat']                            
                         ])) {
-                        $errores[] = ['insert CATT', $categoriaEE['Cat'], alFamiliasTienda::getErrorConsulta()];
+                        $errores[] = ['insert CATT', $categoriaEE['Cat'], 
+                            alFamiliasTienda::getErrorConsulta(), alFamiliasTienda::getSQLConsulta()];
                     }
                 } else {
                     $errores[] = ['insert fam', $categoriaEE['Cat'], ClaseFamilias::getErrorConsulta()];

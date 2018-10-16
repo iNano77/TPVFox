@@ -48,6 +48,10 @@ class ClaseEEArticulos extends ModeloP
     public static function importar($ficherosql, $ruta)
     {
         $contador = 0;
+        echo 'uno 1--->'.$ficherosql;
+        echo 'Ruta--->'.$ruta;
+        
+        $errores = [];
         if (file_exists($ficherosql)) {
             ClaseEEArticulos::limpia();
             $fichero = fopen($ficherosql, 'r');
@@ -61,11 +65,18 @@ class ClaseEEArticulos extends ModeloP
                 }
                 if ($lineanueva) {
                     $lineawrite = str_replace('Articulos', ClaseEEArticulos::$tabla, $lineanueva);
-                    ClaseEEArticulos::_consultaDML($lineawrite);
+                    $inserta = ClaseEEArticulos::_consultaDML($lineawrite);
+                    if($inserta !==0){
+                        $errores[] = [$lineawrite, ClaseEEArticulos::getErrorConsulta(), ClaseEEArticulos::getSQLConsulta()];
+                    }
                 }
             }
-            self::ActualizaEEFamilia();
-            return ($contador);
+            $actualiza = self::ActualizaEEFamilia();
+                    if(!$actualiza){
+                        $errores[] = ['update--->', ClaseEEArticulos::getErrorConsulta(), ClaseEEArticulos::getSQLConsulta()];
+                    }
+            
+            return ($errores);
         }
         return false;
     }
@@ -73,6 +84,11 @@ class ClaseEEArticulos extends ModeloP
     public static function QuitaIva($coniva, $iva)
     {
         return $coniva / (1 + ($iva / 100));
+    }
+
+    public static function SumaIva($siniva, $iva)
+    {
+        return $siniva * (1 + ($iva / 100));
     }
 
     public static function fusionar()
@@ -103,8 +119,8 @@ class ClaseEEArticulos extends ModeloP
                     alArticulosPrecios::insert([
                         'idArticulo' => $nuevoid,
                         'idTienda' => $idTienda,
-                        'pvpCiva' => $articuloEE['pvp'],
-                        'pvpSiva' => self::QuitaIva($articuloEE['pvp'], $articuloEE['iva'])
+                        'pvpCiva' => self::SumaIva($articuloEE['pvp'], $articuloEE['iva']),
+                        'pvpSiva' => $articuloEE['pvp'],
                     ]);
                     alArticulosStocks::actualizarStock($nuevoid, $idTienda, $articuloEE['Stock'], K_STOCKARTICULO_SUMA);
 
@@ -155,7 +171,8 @@ class ClaseEEArticulos extends ModeloP
                     if ($articuloEE['pvp'] != $articulotpv['pvptpv']) {
                         $actualizar = true;
                         alArticulosPrecios::update(
-                            $idArticuloTienda, $idTienda, ['pvpCiva' => $articuloEE['pvp']]
+                            $idArticuloTienda, $idTienda, ['pvpSiva' => $articuloEE['pvp'],
+                                'pvpCiva' => self::SumaIva($articuloEE['pvp'], $articuloEE['iva'])]
                         );
                     }
 

@@ -28,8 +28,9 @@ include_once $ruta.'/inicial.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEEArticulos.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEECategorias.php';
 
+var_dump(ClaseEECategorias::importar('/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/csv/categorias_1539649567.sql','/var/www/html/tpvfox'));
+var_dump(ClaseEECategorias::fusionar());
 
-//var_dump(ClaseEECategorias::importar('/var/www/html/tpvfox/BD/importar_eelectronica/csv/categorias_1539541752.sql','/var/www/html/tpvfox'));
 
-
+var_dump(ClaseEEArticulos::importar('/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/csv/articulos_1539649567.sql','/var/www/html/tpvfox'));
 var_dump(ClaseEEArticulos::fusionar());
