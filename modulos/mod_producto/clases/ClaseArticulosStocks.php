@@ -116,6 +116,7 @@ class alArticulosStocks extends ModeloP
                     'stockOn' => $stockon + ($nunidades * $operador)
                     , 'fechaRegularizacion' => date(FORMATO_FECHA_MYSQL)
                     , 'usuarioRegularizacion' => 0], ['id =' . $idarticulostock]);
+
         }
     }
 
@@ -140,7 +141,7 @@ class alArticulosStocks extends ModeloP
             $resultado = alArticulosStocks::_update(alArticulosStocks::$tabla, [
                     'fechaRegularizacion' => date(FORMATO_FECHA_MYSQL)
                     , 'usuarioRegularizacion' => $idUsuario], ['id =' . self::getIdbyArticulo($idArticulo, $idTienda)]);
-        }
         return $resultado;
     }
+
 }

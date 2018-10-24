@@ -1,4 +1,5 @@
 <?php
+
 /*
  * @Copyright 2018, Alagoro Software. 
  * @licencia   GNU General Public License version 2 or later; see LICENSE.txt
@@ -20,8 +21,7 @@ require_once $URLCom . '/modulos/mod_traits/calculaMD5.php';
  * 
  * @author alagoro
  */
-class ClaseEEArticulos extends ModeloP
-{
+class ClaseEEArticulos extends ModeloP {
 
     use CalcularMD5;
 
@@ -31,26 +31,23 @@ class ClaseEEArticulos extends ModeloP
      * 
      * @return array
      */
-    public static function limpia()
-    {
+    public static function limpia() {
         $sql = 'DELETE FROM ' . self::$tabla;
         return self::_consultaDML($sql);
     }
 
-    private static function ActualizaEEFamilia()
-    {
+    private static function ActualizaEEFamilia() {
         $sql = 'UPDATE modulo_eelectronica_articulos '
-            . ' JOIN familiasTienda ON (modulo_eelectronica_articulos.Cat=familiasTienda.cRefTienda) '
-            . ' SET modulo_eelectronica_articulos.idFamilia=familiasTienda.idFamilia';
+                . ' JOIN familiasTienda ON (modulo_eelectronica_articulos.Cat=familiasTienda.cRefTienda) '
+                . ' SET modulo_eelectronica_articulos.idFamilia=familiasTienda.idFamilia';
         return parent::_consultaDML($sql);
     }
 
-    public static function importar($ficherosql, $ruta)
-    {
+    public static function importar($ficherosql, $ruta) {
         $contador = 0;
-        echo 'uno 1--->'.$ficherosql;
-        echo 'Ruta--->'.$ruta;
-        
+        echo 'uno 1--->' . $ficherosql;
+        echo 'Ruta--->' . $ruta;
+
         $errores = [];
         if (file_exists($ficherosql)) {
             ClaseEEArticulos::limpia();
@@ -66,33 +63,30 @@ class ClaseEEArticulos extends ModeloP
                 if ($lineanueva) {
                     $lineawrite = str_replace('Articulos', ClaseEEArticulos::$tabla, $lineanueva);
                     $inserta = ClaseEEArticulos::_consultaDML($lineawrite);
-                    if($inserta !==0){
+                    if ($inserta !== 0) {
                         $errores[] = [$lineawrite, ClaseEEArticulos::getErrorConsulta(), ClaseEEArticulos::getSQLConsulta()];
                     }
                 }
             }
             $actualiza = self::ActualizaEEFamilia();
-                    if(!$actualiza){
-                        $errores[] = ['update--->', ClaseEEArticulos::getErrorConsulta(), ClaseEEArticulos::getSQLConsulta()];
-                    }
-            
+            if (!$actualiza) {
+                $errores[] = ['update--->', ClaseEEArticulos::getErrorConsulta(), ClaseEEArticulos::getSQLConsulta()];
+            }
+
             return ($errores);
         }
         return false;
     }
 
-    public static function QuitaIva($coniva, $iva)
-    {
+    public static function QuitaIva($coniva, $iva) {
         return $coniva / (1 + ($iva / 100));
     }
 
-    public static function SumaIva($siniva, $iva)
-    {
+    public static function SumaIva($siniva, $iva) {
         return $siniva * (1 + ($iva / 100));
     }
 
-    public static function fusionar()
-    {
+    public static function fusionar() {
         $articulos = self::leer();
         $idTienda = 1;
         $errores = [];
@@ -108,12 +102,12 @@ class ClaseEEArticulos extends ModeloP
                 if ($nuevoid) {
                     $idArticuloTienda = $nuevoid;
                     if (!alArticulosTienda::insert([
-                            'idArticulo' => $nuevoid,
-                            'idTienda' => $idTienda,
-                            'crefTienda' => $articuloEE['Art'],
-                            'idVirtuemart' => '0',
-                            'estado' => 'importado'
-                        ])) {
+                                'idArticulo' => $nuevoid,
+                                'idTienda' => $idTienda,
+                                'crefTienda' => $articuloEE['Art'],
+                                'idVirtuemart' => '0',
+                                'estado' => 'importado'
+                            ])) {
                         $errores[] = ['insert artT', $articuloEE['Art'], alArticulosTienda::getErrorConsulta()];
                     }
                     alArticulosPrecios::insert([
@@ -132,7 +126,6 @@ class ClaseEEArticulos extends ModeloP
                             $errores[] = ['insert Art fam', alArticulos::getErrorConsulta(), alArticulos::getSQLConsulta()];
                         }
                     }
-                    
                 } else {
                     $errores[] = ['existe cref', $articuloEE['Art'], alArticulos::getErrorConsulta(), alArticulos::getSQLConsulta()];
                 }
@@ -153,26 +146,31 @@ class ClaseEEArticulos extends ModeloP
                         $actualizar = true;
                     }
                     $md51 = self::calcularMD5([
-                            $articulotpv['ivaArticulo'],
-                            $articulotpv['descripcion']
+                                $articulotpv['ivaArticulo'],
+                                $articulotpv['descripcion']
                     ]);
 
                     $articuloEE['iva'] = number_format($articuloEE['iva'], 2);
                     $md52 = self::calcularMD5([
-                            $articuloEE['iva'],
-                            substr($articuloEE['Nom'], 0, 100)
+                                $articuloEE['iva'],
+                                substr($articuloEE['Nom'], 0, 100)
                     ]);
                     $actualizar = $actualizar || ($md51 != $md52);
 
                     if ($articuloEE['Stock'] != $articulotpv['stocktpv']) {
                         $actualizar = true;
-                        alArticulosStocks::actualizarStock($idArticuloTienda, $idTienda, $articuloEE['Stock'], K_STOCKARTICULO_SUMA);
+                        $resultado = alArticulosStocks::actualizarStock($idArticuloTienda, $idTienda, $articuloEE['Stock'], K_STOCKARTICULO_REGULARIZA);
+                        if ($resultado) {
+                            $resultado = alArticulosStocks::_update(alArticulosStocks::$tabla, [
+                                        'fechaRegularizacion' => date(FORMATO_FECHA_MYSQL)
+                                        , 'usuarioRegularizacion' => 0], ['id =' . self::getIdbyArticulo($idArticuloTienda, $idTienda)]);
+                        }
                     }
                     if ($articuloEE['pvp'] != $articulotpv['pvptpv']) {
                         $actualizar = true;
                         alArticulosPrecios::update(
-                            $idArticuloTienda, $idTienda, ['pvpSiva' => $articuloEE['pvp'],
-                                'pvpCiva' => self::SumaIva($articuloEE['pvp'], $articuloEE['iva'])]
+                                $idArticuloTienda, $idTienda, ['pvpSiva' => $articuloEE['pvp'],
+                            'pvpCiva' => self::SumaIva($articuloEE['pvp'], $articuloEE['iva'])]
                         );
                     }
 
@@ -188,14 +186,13 @@ class ClaseEEArticulos extends ModeloP
         return $errores;
     }
 
-    public static function leer()
-    {
+    public static function leer() {
         return self::_leer(self::$tabla); //, '', [], [], 100);
     }
 
-    public static function leerFamilia($CatEE, $idTienda)
-    {
+    public static function leerFamilia($CatEE, $idTienda) {
         $resultado = self::_consulta('SELECT idFamilia FROM familiasTienda WHERE ');
         return self::_leer(self::$tabla);
     }
+
 }
