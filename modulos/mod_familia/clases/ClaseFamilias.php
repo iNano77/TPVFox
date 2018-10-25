@@ -23,6 +23,7 @@ class ClaseFamilias extends Modelo
     public $view;
     public $idTienda;
 
+
     public function __construct($conexion = '')
     {
         // Solo realizamos asignamos 
