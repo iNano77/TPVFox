@@ -14,11 +14,11 @@ require_once $URLCom . '/modulos/mod_traits/traitFormateaFechas.php';
  * Guardar en BD el progreso de la fusion asincrona (incrontab)
  * 
  */
-class fusion extends ModeloP {
+class mdbexport extends ModeloP {
 
     use traitFormateaFechas;
     
-    protected static $tabla = 'modulo_eelectronica_importar';
+    protected static $tabla = 'modulo_eelectronica_mdbexport';
 
     /**
      * Crea un registro para monitorizar el progreso de las acciones
@@ -28,13 +28,8 @@ class fusion extends ModeloP {
      * @param integer $totalRegistros
      * @return integer id registro creado o false en caso de error
      */
-    public static function crear($accion, $totalRegistros) {
-        $resultado = self::_insert(self::$tabla, [
-            'fechaInicio'=>date(self::getFormatoFechaHoraSQL()),
-            'accion'=>$accion, 
-            'totalRegistros'=>$totalRegistros,
-            'numRegistro'=>0,
-            'actualizado_en'=>date(self::getFormatoFechaHoraSQL())]);
+    public static function crear($datos) {        
+        $resultado = self::_insert(self::$tabla, $datos);
         return $resultado;
     }
 
@@ -45,10 +40,11 @@ class fusion extends ModeloP {
      * @param integer $numRegistros Contador del registro por el que va la accion
      * @return boolean true si el update terminado correctamente
      */
-    public static function actualizar($idProgreso, $numRegistros) {
-        $resultado = self::_update(self::$tabla, [            
-            'numRegistro'=>$numRegistros,
-            'actualizado_en'=>date(self::getFormatoFechaHoraSQL())],['id='.$idProgreso]);
+    public static function actualizar($id, $datos) {
+        $datos['actualizado_en'] = date(self::getFormatoFechaHoraSQL());
+        $resultado = self::_update(self::$tabla
+                ,$datos
+                ,['id='.$id]);
         return $resultado;
     }
     
@@ -61,6 +57,10 @@ class fusion extends ModeloP {
     
     public static function leer($idProgreso){
         return parent::_leer(self::$tabla,['id='.$idProgreso]);
+    }
+
+    public static function leerNoProcesados(){
+        return parent::_leer(self::$tabla,['procesado=false']);
     }
             
 }

@@ -14,22 +14,25 @@ require_once $URLCom . '/modulos/mod_traits/traitFormateaFechas.php';
  * Guardar en BD el progreso de la fusion asincrona (incrontab)
  * 
  */
-class ClaseRegistroSistema extends ModeloP {
+class registroSistema extends ModeloP {
 
     use traitFormateaFechas;
     
     protected static $tabla = 'modulo_eelectronica_registro';
 
-    public static function crearRegistro($accion, $numRegistros) {
-//        $resultado = self::_insert(self::$tabla, ['fechaInicio'=>date(self::getFormatoFecha_dmY()),
-//            $fichero
-//            $accion, $numRegistros]);
-//        return $resultado;
-    }
-    public static function actualizarProgreso($idProgreso, $accion, $numRegistros) {
-        $resultado = self::_update(self::$tabla, [
-            $accion, $numRegistros],['id='.$idProgreso]);
+    public static function crear($fichero, $accion, $sentencia,$error) {
+        $resultado = self::_insert(self::$tabla, [
+            'fichero'=>$fichero, 
+            'accion'=>$accion,
+            'sentencia'=>$sentencia,
+            'error'=>$error,
+            'actualizado_en'=>date(self::getFormatoFechaHoraSQL())]);
         return $resultado;
+    }
+
+    
+    public static function leer($idRegistro){
+        return parent::_leer(self::$tabla,['id='.$idRegistro]);
     }
     
     

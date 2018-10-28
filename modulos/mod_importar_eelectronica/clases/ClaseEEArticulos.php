@@ -12,6 +12,8 @@ include_once $URLCom . '/modulos/mod_producto/clases/ClaseArticulosTienda.php';
 include_once $URLCom . '/modulos/mod_producto/clases/ClaseArticulos.php';
 include_once $URLCom . '/modulos/mod_producto/clases/ClaseArticulosStocks.php';
 include_once $URLCom . '/modulos/mod_producto/clases/ClaseArticulosPrecios.php';
+include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseFusion.php';
+include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/claseRegistroSistema.php';
 
 require_once $URLCom . '/modulos/mod_traits/calculaMD5.php';
 
@@ -45,11 +47,10 @@ class ClaseEEArticulos extends ModeloP {
 
     public static function importar($ficherosql, $ruta) {
         $contador = 0;
-        echo 'uno 1--->' . $ficherosql;
-        echo 'Ruta--->' . $ruta;
 
         $errores = [];
         if (file_exists($ficherosql)) {
+            $idProgreso = fusion::crear('articulos', 0);
             ClaseEEArticulos::limpia();
             $fichero = fopen($ficherosql, 'r');
             $linea = fgets($fichero);
@@ -63,16 +64,28 @@ class ClaseEEArticulos extends ModeloP {
                 if ($lineanueva) {
                     $lineawrite = str_replace('Articulos', ClaseEEArticulos::$tabla, $lineanueva);
                     $inserta = ClaseEEArticulos::_consultaDML($lineawrite);
+                    if($idProgreso > 0){
+                        fusion::actualizar($idProgreso, $contador++);
+                    }
                     if ($inserta !== 0) {
+                        registroSistema::crear('ClaseEEArticulos->importar'
+                                , $lineawrite
+                                , ClaseEEArticulos::getSQLConsulta()
+                                , ClaseEEArticulos::getErrorConsulta());
                         $errores[] = [$lineawrite, ClaseEEArticulos::getErrorConsulta(), ClaseEEArticulos::getSQLConsulta()];
                     }
                 }
             }
+            fusion::finalizar($idProgreso);
+            $idProgreso = fusion::crear('familias de articulos', $contador);
             $actualiza = self::ActualizaEEFamilia();
             if (!$actualiza) {
+                        registroSistema::crear('ClaseEEArticulos->importar', 'update--->'
+                                , ClaseEEArticulos::getSQLConsulta()
+                                , ClaseEEArticulos::getErrorConsulta());
                 $errores[] = ['update--->', ClaseEEArticulos::getErrorConsulta(), ClaseEEArticulos::getSQLConsulta()];
             }
-
+            fusion::finalizar($idProgreso);
             return ($errores);
         }
         return false;

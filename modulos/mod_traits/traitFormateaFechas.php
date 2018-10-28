@@ -17,4 +17,11 @@ trait traitFormateaFechas {
         return 'd-m-Y';
     }
 
+    public static function getFormatoFechaHoraSQL() {
+        return 'Y-m-d H:i:s';
+    }
+
+    public static function getFormatoFechaSQL() {
+        return 'Y-m-d';
+    }
 }
