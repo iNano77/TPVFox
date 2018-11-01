@@ -6,9 +6,12 @@
 */
 
 
+//deprecated: usar traitFormateaFechas 2018-10-29
+define('FORMATO_FECHA_ES', 'd-m-Y H:i:s');
+define('FORMATO_FECHA_MYSQL', 'Y-m-d H:i:s');
 
-define('FORMATO_FECHA_ES', 'd-m-Y H:m:s');
-define('FORMATO_FECHA_MYSQL', 'Y-m-d H:m:s');
+define('MODO_EJECUCION','web');
+
 
 $Ruta = __DIR__.'/';
 	

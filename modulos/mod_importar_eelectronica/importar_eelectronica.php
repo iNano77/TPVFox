@@ -24,8 +24,11 @@ if (isset($argc)) {
     if ($ruta && $fichero) {
         $ficherosql = $ruta . '/' . $fichero;
         if (strpos($fichero, 'categorias') !== FALSE) {
+            if(constant('MODO_EJECUCION')=='web'){
             echo ' categorias ';
+            }
             $resultado = ClaseEECategorias::importar($ficherosql, $ruta);
+            
             ClaseEECategorias::fusionar();
         }
          elseif (strpos($fichero, 'articulos') !== FALSE) {

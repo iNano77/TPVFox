@@ -9,6 +9,8 @@
 
 trait traitFormateaFechas {
 
+    
+    
     public static function getFormatoFecha_dmYHora() {
         return 'd-m-Y H:i:s';
     }

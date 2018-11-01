@@ -15,7 +15,7 @@ include_once $URLCom . '/modulos/mod_producto/clases/ClaseArticulosPrecios.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseFusion.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/claseRegistroSistema.php';
 
-require_once $URLCom . '/modulos/mod_traits/calculaMD5.php';
+require_once $URLCom . '/modulos/mod_traits/traitCalculaMD5.php';
 
 /**
  * Description of ClaseEEArticulos
@@ -25,7 +25,7 @@ require_once $URLCom . '/modulos/mod_traits/calculaMD5.php';
  */
 class ClaseEEArticulos extends ModeloP {
 
-    use CalcularMD5;
+    use traitCalcularMD5;
 
     protected static $tabla = 'modulo_eelectronica_articulos';
 
@@ -45,7 +45,7 @@ class ClaseEEArticulos extends ModeloP {
         return parent::_consultaDML($sql);
     }
 
-    public static function importar($ficherosql, $ruta) {
+    public static function importar($ficherosql) {
         $contador = 0;
 
         $errores = [];
@@ -101,8 +101,10 @@ class ClaseEEArticulos extends ModeloP {
 
     public static function fusionar() {
         $articulos = self::leer();
+        $idprogreso = fusion::crear('fusion articulos', count($articulos));
         $idTienda = 1;
         $errores = [];
+        $contador = 0;
         foreach ($articulos as $articuloEE) {
             $datos = [
                 'articulo_name' => substr($articuloEE['Nom'], 0, 100),
@@ -122,6 +124,9 @@ class ClaseEEArticulos extends ModeloP {
                                 'estado' => 'importado'
                             ])) {
                         $errores[] = ['insert artT', $articuloEE['Art'], alArticulosTienda::getErrorConsulta()];
+                        registroSistema::crear(basename(__FILE__), 'fusionar articulos:insert artT'
+                            , alArticulosTienda::getSQLConsulta()
+                            , alArticulosTienda::getErrorConsulta());
                     }
                     alArticulosPrecios::insert([
                         'idArticulo' => $nuevoid,
@@ -173,11 +178,6 @@ class ClaseEEArticulos extends ModeloP {
                     if ($articuloEE['Stock'] != $articulotpv['stocktpv']) {
                         $actualizar = true;
                         $resultado = alArticulosStocks::actualizarStock($idArticuloTienda, $idTienda, $articuloEE['Stock'], K_STOCKARTICULO_REGULARIZA);
-                        if ($resultado) {
-                            $resultado = alArticulosStocks::_update(alArticulosStocks::$tabla, [
-                                        'fechaRegularizacion' => date(FORMATO_FECHA_MYSQL)
-                                        , 'usuarioRegularizacion' => 0], ['id =' . self::getIdbyArticulo($idArticuloTienda, $idTienda)]);
-                        }
                     }
                     if ($articuloEE['pvp'] != $articulotpv['pvptpv']) {
                         $actualizar = true;
@@ -195,6 +195,7 @@ class ClaseEEArticulos extends ModeloP {
                     }
                 }
             }
+            fusion::actualizar($idprogreso, $contador++);   
         }
         return $errores;
     }

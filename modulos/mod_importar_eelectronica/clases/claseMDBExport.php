@@ -59,8 +59,12 @@ class mdbexport extends ModeloP {
         return parent::_leer(self::$tabla,['id='.$idProgreso]);
     }
 
-    public static function leerNoProcesados(){
-        return parent::_leer(self::$tabla,['procesado=false']);
+    public static function leerNoProcesados($tabla=''){
+        $condiciones = ['procesado=false'];
+        if($tabla){
+            $condiciones[] = 'tabla=\''.$tabla.'\'';
+        }
+        return parent::_leer(self::$tabla,$condiciones);
     }
             
 }
