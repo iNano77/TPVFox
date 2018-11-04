@@ -2005,3 +2005,5 @@ CREATE TABLE `modulo_balanza_plus` ( `idBalanza` INT NOT NULL , `plu` INT(10) NO
 
 DELETE FROM `familiasTienda` WHERE `idTienda`=1;
 ALTER TABLE `familiasTienda` ADD `id` INT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+
+INSERT INTO `iva` (`idIva`, `descripcionIva`, `iva`, `recargo`) VALUES (NULL, 'General 21%', '21.00', NULL);

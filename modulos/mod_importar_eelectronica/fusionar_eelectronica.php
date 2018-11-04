@@ -42,14 +42,15 @@ $ficherosmdb = glob($origen . '/*.mdb');
 if (count($ficherosmdb) > 0) {
     foreach ($ficherosmdb as $ficheromdb) {
         $elmdb = basename($ficheromdb);
-        registroSistema::crear(basename(__FILE__), 'mdbexport', $elmdb, 'inicio');
+        $registroid = substr($elmdb, 3, 10);
+        registroSistema::crear($registroid, 'mdbexport', $elmdb, 'inicio');
         $testigo = pasoTestigo::leerTestigo('mdbexport');
-        registroSistema::crear(basename(__FILE__), 'crear pasotestigo', pasoTestigo::getSQLConsulta(), pasoTestigo::getErrorConsulta());
+        registroSistema::crear($registroid, 'crear pasotestigo', pasoTestigo::getSQLConsulta(), pasoTestigo::getErrorConsulta());
         if ($testigo['estado'] == pasoTestigo::K_ESTADO_DESBLOQUEADO) {
-            registroSistema::crear(basename(__FILE__), 'fusionar', json_encode($testigo), 'está desbloqueado');            
+            registroSistema::crear($registroid, 'fusionar', json_encode($testigo), 'está desbloqueado');            
             $idtestigo = $testigo['id'];
             pasoTestigo::bloquear($idtestigo);
-            registroSistema::crear(basename(__FILE__), 'fusionar', 'pasotestigo:'.$idtestigo, 'bloqueando');
+            registroSistema::crear($registroid, 'fusionar', 'pasotestigo:'.$idtestigo, 'bloqueando');
             foreach ($tablas as $fichero => $tabla) {
                 $destino = $ruta . '/' . $fichero . '_' . $variable . '.sql';
                 exec('mdb-export -I mysql ' . $ficheromdb . ' ' . $tabla . ' > ' . $destino);
@@ -64,42 +65,42 @@ if (count($ficherosmdb) > 0) {
                         $contador++;
                     }
                     if (!file_exists($destino)) {
-                        registroSistema::crear(basename(__FILE__), 'mdbexport', $destino, 'No existe fichero');
+                        registroSistema::crear($registroid, 'mdbexport', $destino, 'No existe fichero');
                     } else {
 //                        exec('/usr/bin/php '.dirname(__FILE__).'/monitor_eelectronica.php '.$ruta.' '.basename($destino));
                         $fichero = basename($destino);
                         $ficherosql = $ruta . '/' . $fichero;
                         if (strpos($fichero, 'categorias') !== FALSE) {
-                            registroSistema::crear(basename(__FILE__), 'importar categorias', basename($ficherosql), 'inicio:'.time());
+                            registroSistema::crear($registroid, 'importar categorias', basename($ficherosql), 'inicio:'.time());
                             $resultado = ClaseEECategorias::importar($ficherosql);
-                            registroSistema::crear(basename(__FILE__), 'importar categorias', basename($ficherosql), 'fin:'.time());
-                            registroSistema::crear(basename(__FILE__), 'fusionar categorias', basename($ficherosql), 'inicio:'.time());
+                            registroSistema::crear($registroid, 'importar categorias', basename($ficherosql), 'fin:'.time());
+                            registroSistema::crear($registroid, 'fusionar categorias', basename($ficherosql), 'inicio:'.time());
                             ClaseEECategorias::fusionar();
-                            registroSistema::crear(basename(__FILE__), 'fusionar categorias', basename($ficherosql), 'fin:'.time());
+                            registroSistema::crear($registroid, 'fusionar categorias', basename($ficherosql), 'fin:'.time());
                         } elseif (strpos($fichero, 'articulos') !== FALSE) {
-                            registroSistema::crear(basename(__FILE__), 'importar articulos', basename($ficherosql), 'inicio');
+                            registroSistema::crear($registroid, 'importar articulos', basename($ficherosql), 'inicio');
                             $resultado = ClaseEEArticulos::importar($ficherosql);
-                            registroSistema::crear(basename(__FILE__), 'importar articulos', basename($ficherosql), 'fin');
-                            registroSistema::crear(basename(__FILE__), 'fusionar articulos', basename($ficherosql), 'inicio');
+                            registroSistema::crear($registroid, 'importar articulos', basename($ficherosql), 'fin');
+                            registroSistema::crear($registroid, 'fusionar articulos', basename($ficherosql), 'inicio');
                             ClaseEEArticulos::fusionar();
-                            registroSistema::crear(basename(__FILE__), 'fusionar articulos', basename($ficherosql), 'fin');
+                            registroSistema::crear($registroid, 'fusionar articulos', basename($ficherosql), 'fin');
                         } elseif (strpos($fichero, 'dtocliente') !== FALSE) {
                             ClaseEEDtoCliente::importar($ficherosql, $ruta);
                         } elseif (strpos($fichero, 'familiadto') !== FALSE) {
                             ClaseEEFamiliaDto::importar($ficherosql, $ruta);
                         } else {
-                            registroSistema::crear(basename(__FILE__), 'importar ee', $fichero, 'No es fichero válido');
+                            registroSistema::crear($registroid, 'importar ee', $fichero, 'No es fichero válido');
                         }
                     }
                 }
             }
             pasoTestigo::desbloquear($idtestigo);
-            registroSistema::crear(basename(__FILE__), 'fusionar', 'pasotestigo', 'desbloqueado');
+            registroSistema::crear($registroid, 'fusionar', 'pasotestigo', 'desbloqueado');
         } else {
-            registroSistema::crear(basename(__FILE__), 'mdbexport', 'Ya existe proceso mdb export', 'No se procesa mdb:' . $elmdb);
+            registroSistema::crear($registroid, 'mdbexport', 'Ya existe proceso mdb export', 'No se procesa mdb:' . $elmdb);
         }
         rename($ficheromdb, $rutapro . '/' . $elmdb);
-        registroSistema::crear(basename(__FILE__), 'mdbexport', $elmdb, 'fin');
+        registroSistema::crear($registroid, 'mdbexport', $elmdb, 'fin');
     }
 } else {
     registroSistema::crear(basename(__FILE__), 'ficherosmdb', $origen, 'No existen ficheros mdb');

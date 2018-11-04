@@ -32,6 +32,7 @@ class ModuloEelectronicaImportar extends AbstractMigration
     public function up(){
         $users = $this->table('modulo_eelectronica_importar');
         $users->addColumn('fechaInicio', 'datetime',['default' => 'CURRENT_TIMESTAMP'])
+                ->addColumn('origen', 'string', ['null'=>true, 'limit' => 50])
                 ->addColumn('accion', 'string', ['null'=>true, 'limit' => 50])
                 ->addColumn('totalRegistros','integer',['limit'=>11])
                 ->addColumn('numRegistro','integer',['limit'=>11])

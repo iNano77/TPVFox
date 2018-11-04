@@ -99,7 +99,7 @@ class ClaseEEArticulos extends ModeloP {
         return $siniva * (1 + ($iva / 100));
     }
 
-    public static function fusionar() {
+    public static function fusionar($mdbOrigen='00000000') {
         $articulos = self::leer();
         $idprogreso = fusion::crear('fusion articulos', count($articulos));
         $idTienda = 1;

@@ -28,9 +28,10 @@ class fusion extends ModeloP {
      * @param integer $totalRegistros
      * @return integer id registro creado o false en caso de error
      */
-    public static function crear($accion, $totalRegistros) {
+    public static function crear($accion, $totalRegistros,$mdborigen) {
         $resultado = self::_insert(self::$tabla, [
             'fechaInicio'=>date(self::getFormatoFechaHoraSQL()),
+            'origen'=>$origen,
             'accion'=>$accion, 
             'totalRegistros'=>$totalRegistros,
             'numRegistro'=>0,
