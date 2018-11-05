@@ -40,23 +40,7 @@ $VarJS = "";
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <div class="nav">
-                        <h4> Familias</h4>
-                        <ul class="nav nav-pills nav-stacked"> 
-                                <li><a class="" 
-                                            id="btn-expandirtodo" onclick="expandirTodos()">expandir Nivel</a></li>
-                                <li><a class="" 
-                                            id="btn-compactartodo" onclick="compactarTodos()">compactar Todo</a></li>
-                            
-                        </ul>
-                    </div>
-                    <div id="menuseleccion" class="nav" style="display: none">
-                        <h5> Opciones para una selección</h5>
-                        <ul> 
-                            <li><button class="" id="boton-eliminarseccionados"
-                                        data-alabuelo="0">Quitar seleccion todos</button></li>
-                        </ul>
-                    </div>
+                    <button onclick="javascript:progresoImportar();">Importar</button>
                 </div>
                 <div class="col-md-10">
                     <!-- Tabla de lineas de productos -->
@@ -73,6 +57,9 @@ $VarJS = "";
                                     <th>Productos</th>
                                 </tr>
                             </thead>
+                            <tbody id="lineas">
+                                
+                            </tbody>
                         </table>
                     </div>
 

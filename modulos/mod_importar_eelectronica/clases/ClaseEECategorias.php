@@ -28,13 +28,13 @@ class ClaseEECategorias extends ModeloP
         return self::_consultaDML($sql);
     }
 
-    public static function importar($ficherosql) //, $ruta='')
+    public static function importar($ficherosql, $origenmdb='') //, $ruta='')
     {
         if (file_exists($ficherosql)) {
             self::limpia();
             $errores = [];
             $contador = 0;
-            $idProgreso = fusion::crear('categorias', $contador);
+            $idProgreso = fusion::crear('categorias', $contador, $origenmdb);
             $fichero = fopen($ficherosql, 'r');
             while ($linea = fgets($fichero)) {
                 $lineanueva = str_replace('Categorias', ClaseEECategorias::$tabla, $linea);

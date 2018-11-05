@@ -18,16 +18,12 @@
  */
 /* ===============  REALIZAMOS CONEXIONES  =============== */
 include_once './../../inicial.php';
-include_once $URLCom . '/configuracion.php';
+include_once $URLCom . '/modulos/mod_importar_eelectronica/tareas/claseTareasImportar.php';
 $pulsado = $_POST['pulsado'];
 switch ($pulsado) {
     case 'progresoImportar':
-        
+        $resultado = tareasImportar::EstadoProgreso();
+        echo json_encode($resultado);
         break;
 }
-echo $resultado;
-
-
-
-
 

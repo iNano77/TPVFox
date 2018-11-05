@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <modulo nombre="mod_importar_eelectronica" descripcion="eelectronica" permiso="1">
-    <vista nombre="progresoImportar.php" descripcion="progreso fusionar articulos ee" permiso="0"> </vista>
+    <vista nombre="importar_eelectronica.php" descripcion="Listado Familias" permiso="0"> </vista>
+    <vista nombre="fusionar_eelectronica.php" descripcion="fusionar articulos ee" permiso="0"> </vista>
+    <vista nombre="progresoImportar.php" descripcion="progreso fusionar articulos ee" permiso="0"> </vista>    
 </modulo>

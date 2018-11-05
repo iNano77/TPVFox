@@ -72,7 +72,7 @@ if (count($ficherosmdb) > 0) {
                         $ficherosql = $ruta . '/' . $fichero;
                         if (strpos($fichero, 'categorias') !== FALSE) {
                             registroSistema::crear($registroid, 'importar categorias', basename($ficherosql), 'inicio:'.time());
-                            $resultado = ClaseEECategorias::importar($ficherosql);
+                            $resultado = ClaseEECategorias::importar($ficherosql, $registroid);
                             registroSistema::crear($registroid, 'importar categorias', basename($ficherosql), 'fin:'.time());
                             registroSistema::crear($registroid, 'fusionar categorias', basename($ficherosql), 'inicio:'.time());
                             ClaseEECategorias::fusionar();

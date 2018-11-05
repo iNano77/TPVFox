@@ -12,6 +12,6 @@ include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/claseRegistroS
 class tareasImportar {
 
 public static function EstadoProgreso(){
-    
+    return ['html'=>'<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>6</td></tr>'];
 }
 }
