@@ -45,12 +45,12 @@ class ClaseEEArticulos extends ModeloP {
         return parent::_consultaDML($sql);
     }
 
-    public static function importar($ficherosql) {
+    public static function importar($ficherosql, $origenmdb='') {
         $contador = 0;
 
         $errores = [];
         if (file_exists($ficherosql)) {
-            $idProgreso = fusion::crear('articulos', 0);
+            $idProgreso = fusion::crear('articulos', $contador, $origenmdb);
             ClaseEEArticulos::limpia();
             $fichero = fopen($ficherosql, 'r');
             $linea = fgets($fichero);
@@ -67,7 +67,7 @@ class ClaseEEArticulos extends ModeloP {
                     if($idProgreso > 0){
                         fusion::actualizar($idProgreso, $contador++);
                     }
-                    if ($inserta !== 0) {
+                    if ($inserta === false) {
                         registroSistema::crear('ClaseEEArticulos->importar'
                                 , $lineawrite
                                 , ClaseEEArticulos::getSQLConsulta()
@@ -101,7 +101,7 @@ class ClaseEEArticulos extends ModeloP {
 
     public static function fusionar($mdbOrigen='00000000') {
         $articulos = self::leer();
-        $idprogreso = fusion::crear('fusion articulos', count($articulos));
+        $idprogreso = fusion::crear('fusion articulos', count($articulos), $mdbOrigen);
         $idTienda = 1;
         $errores = [];
         $contador = 0;

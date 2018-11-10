@@ -5,24 +5,46 @@
  * @Descripción	
  */
 
+var timer;
+var contador = 0;
 
 $(function () {
-
+    timer = setInterval(progresoImportar, 2000);
 });
 
-function progresoImportar(){
-        
-            ajaxCall({pulsado: 'progresoImportar',
-                }, function (respuesta) {
-                var obj = JSON.parse(respuesta);
-                console.log(obj);
-                if (!obj.error) {
-                    $('#lineas').html(obj.html);
-                } else {
-                    alert('Error ');
-                }
-            });
+function progresoImportar() {
+
+    ajaxCall({pulsado: 'progresoImportar',
+    }, function (respuesta) {
+        var obj = JSON.parse(respuesta);
+        console.log(obj);
+        if (!obj.error) {
+            $('#contador').val(++contador);
+            $('#lineas').html(obj.html);
+//            if (contador == 10) {
+//                clearInterval(timer);
+//                contador = 0;
+//            }
+        } else {
+            alert('Error ');
+            clearInterval(timer);
+            contador = 0;
+        }
+    });
 }
+
+function progresoIniciar() {
+    clearInterval(timer);
+    contador = 0;
+    timer = setInterval(progresoImportar, 2000);
+}
+
+function progresoParar() {
+
+    clearInterval(timer);
+    contador = 0;
+}
+
 
 function ajaxCall(parametros, callback) {
 

@@ -64,4 +64,11 @@ class fusion extends ModeloP {
         return parent::_leer(self::$tabla,['id='.$idProgreso]);
     }
             
+    public static function leerOrigen($origen,$accion=''){
+        $condiciones = ['origen=\''.$origen.'\''];
+        if($accion!= ''){
+            $condiciones[]='accion=\''.$accion.'\'';
+        }
+        return parent::_leer(self::$tabla,$condiciones);
+    }
 }

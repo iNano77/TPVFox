@@ -22,7 +22,7 @@ include_once $URLCom . '/modulos/mod_importar_eelectronica/tareas/claseTareasImp
 $pulsado = $_POST['pulsado'];
 switch ($pulsado) {
     case 'progresoImportar':
-        $resultado = tareasImportar::EstadoProgreso();
+        $resultado = tareasImportar::EstadoProgreso('mdbexport');
         echo json_encode($resultado);
         break;
 }

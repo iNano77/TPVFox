@@ -34,6 +34,9 @@ class registroSistema extends ModeloP {
     public static function leer($idRegistro){
         return parent::_leer(self::$tabla,['id='.$idRegistro]);
     }
+    public static function leerXFichero($fichero){
+        return parent::_leer(self::$tabla,['fichero='.$fichero]);
+    }
     
     
 }

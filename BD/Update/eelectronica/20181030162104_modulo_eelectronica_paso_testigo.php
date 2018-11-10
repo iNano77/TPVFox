@@ -32,6 +32,7 @@ class ModuloEelectronicaPasoTestigo extends AbstractMigration
     public function up(){
         $users = $this->table('modulo_eelectronica_pasotestigo');
         $users->addColumn('testigo', 'string', ['limit' => 200])
+              ->addColumn('origen', 'string', ['null'=>true, 'limit' => 50])
               ->addColumn('estado', 'integer', ['limit'=>1, 'default' => false])
               ->addTimestamps('creado_en', 'actualizado_en')
               ->create();

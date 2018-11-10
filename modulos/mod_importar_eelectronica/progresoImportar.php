@@ -40,12 +40,14 @@ $VarJS = "";
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <button onclick="javascript:progresoImportar();">Importar</button>
+                    <button onclick="javascript:progresoIniciar();">Iniciar</button>
+                    <button onclick="javascript:progresoParar();">Parar</button>
                 </div>
                 <div class="col-md-10">
                     <!-- Tabla de lineas de productos -->
 
                     <div class="row" id="tablafamilias">
+                        <label for="contador">Contador:</label><input type="text" id="contador">
                         <table id="tabla" class="table table-bordered table-hover table-striped" >
                             <thead>
                                 <tr>
