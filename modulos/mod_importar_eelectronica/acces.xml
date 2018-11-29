@@ -3,4 +3,5 @@
     <vista nombre="importar_eelectronica.php" descripcion="Listado Familias" permiso="0"> </vista>
     <vista nombre="fusionar_eelectronica.php" descripcion="fusionar articulos ee" permiso="0"> </vista>
     <vista nombre="progresoImportar.php" descripcion="progreso fusionar articulos ee" permiso="0"> </vista>    
+    <vista nombre="importarFotos_eelectronica.php" descripcion="importar fotos ee" permiso="0"> </vista>
 </modulo>

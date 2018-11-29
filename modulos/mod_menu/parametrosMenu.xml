@@ -33,7 +33,7 @@
         <item_nivel_2 descripcion="Reorganizar" modulo="mod_reorganizacion" vista="ListadoReorganizar.php"></item_nivel_2>
 	<item_nivel_2 descripcion="Balanzas" modulo="mod_balanza" vista="ListaBalanzas.php"></item_nivel_2>
 	<item_nivel_2 descripcion="Importar EE" modulo="mod_importar_eelectronica" vista="fusionar_eelectronica.php"></item_nivel_2>
+	<item_nivel_2 descripcion="Importar fotos EE" modulo="mod_importar_eelectronica" vista="importarFotos_eelectronica.php"></item_nivel_2>
 	<item_nivel_2 descripcion="progreso EE" modulo="mod_importar_eelectronica" vista="progresoImportar.php"></item_nivel_2>
-    </item_nivel_1>
-    
+    </item_nivel_1>    
 </items>
