@@ -17,10 +17,10 @@ include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEEFotos.p
 
 EEFotos::setRuta($RutaServidor.$HostNombre.$RutaDatos);
 
-$elementos = EEFotos::leerLista('/var/www/html/tpvfox/fotos');
+$elementos = EEFotos::leerLista($rutatpv.'/fotos');
 echo 'Hay '.$elementos. ' ficheros de imagen para asociar.'.'<br>';
 //echo EEFotos::getLista();
 echo $elementos > 0 ? EEFotos::procesalista() :  'error';
 echo '<br>';
-$elementos = EEFotos::leerLista('/var/www/html/tpvfox/fotos');
+$elementos = EEFotos::leerLista($rutatpv.'/fotos');
 echo 'De los cuales '.$elementos. ' No se han podido asociar.';
