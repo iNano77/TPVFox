@@ -140,6 +140,7 @@ function addPlu(idBalanza){
     var tecla=$('#teclaPlu').val();
 
     var pvpCiva = $('#precioCIva').val();
+
     if(id=="" || plu =="" ){
         alert("Quedan campos sin cubrir");
     }else{
