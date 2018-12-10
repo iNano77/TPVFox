@@ -123,7 +123,7 @@ function datosEnInput(id, nombre, ref, codBarras,precioCiva){
     $('#nombreProducto').val(nombre);
     $('#referencia').val(ref);
     $('#codBarras').val(codBarras);
-    $('#precioConIva').val(precioCiva);
+    $('#precioCIva').val(precioCiva);
 
 }
 function seleccionProductoModal(id, nombre, ref, codBarras,precioCiva){
@@ -138,7 +138,8 @@ function addPlu(idBalanza){
     var cref=$('#referencia').val();
     var articulo_name=$('#nombreProducto').val();
     var tecla=$('#teclaPlu').val();
-    var pvpCiva = $('#precioConIva').val();
+
+    var pvpCiva = $('#precioCIva').val();
     if(id=="" || plu =="" ){
         alert("Quedan campos sin cubrir");
     }else{
