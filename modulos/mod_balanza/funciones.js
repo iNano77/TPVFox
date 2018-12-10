@@ -139,7 +139,6 @@ function addPlu(idBalanza){
     var articulo_name=$('#nombreProducto').val();
     var tecla=$('#teclaPlu').val();
     var pvpCiva = $('#precioConIva').val();
-
     if(id=="" || plu =="" ){
         alert("Quedan campos sin cubrir");
     }else{

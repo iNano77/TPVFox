@@ -123,7 +123,6 @@ function htmlAddPLU($tecla, $idBalanza){
                 .'<div class="col-md-2">'
                     .'<label>Precio C/Iva:</label>'
                     .'<input type="text" name="precioConiva" id="precioConIva" value="" size="8">'
-
                 .'</div>'
             .'</div>'
         .'<div>'
