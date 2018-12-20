@@ -8,9 +8,6 @@
 var timer;
 var contador = 0;
 
-$(function () {
-    timer = setInterval(progresoImportar, 2000);
-});
 
 function progresoImportar() {
 
@@ -45,6 +42,16 @@ function progresoParar() {
     contador = 0;
 }
 
+function iniciarImportarFusion(){
+    // Iniciamos proceso Importar y Fusionar en segundo plano.
+    ajaxCall({pulsado: 'IniciarImportacionFusion'}, function (respuesta) {
+        var obj = JSON.parse(respuesta);
+        console.log(obj);
+        alert('Prueba');
+       
+    });
+
+}
 
 function ajaxCall(parametros, callback) {
 

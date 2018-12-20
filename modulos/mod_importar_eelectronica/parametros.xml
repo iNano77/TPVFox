@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- En parametros configuracion , si cambiar alguno por defecto o añades alguno , es conveniente que elimines de 
+de la tabla modulos_configuracion los registros de este modulo
+Numero tecla:
+ 13 -> Intro
+ 40 -> Fecha abajo
+
+
+-->
+
+<parametros>
+	<configuracion>
+		<!-- Campos a mostrar en lista de producto -->
+		<ruta nombre="sql" >/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/csv</ruta>
+        <ruta nombre="procesado">/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/procesados</ruta>
+        <ruta nombre="origen">/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/mdbs</ruta>
+
+	</configuracion>
+	
+	
+	<cajas_input data-obj="id_input">
+		
+		
+	</cajas_input>
+	
+</parametros>

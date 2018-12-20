@@ -23,7 +23,14 @@ $pulsado = $_POST['pulsado'];
 switch ($pulsado) {
     case 'progresoImportar':
         $resultado = tareasImportar::EstadoProgreso('mdbexport');
-        echo json_encode($resultado);
-        break;
+    break;
+
+    case 'IniciarImportacionFusion':
+        // Iniciamos el proceso Importar y Fusion en segundo plano
+        $resultado= array();
+        exec("php -f fusionar_eelectronica.php > /dev/null &");
+    breaK;    
 }
+echo json_encode($resultado);
+
 

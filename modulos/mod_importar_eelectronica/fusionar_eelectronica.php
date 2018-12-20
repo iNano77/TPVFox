@@ -3,32 +3,49 @@
  * @Copyright 2018, Alagoro Software. 
  * @licencia   GNU General Public License version 2 or later; see LICENSE.txt
  * @Autor Alberto Lago Rodríguez. Alagoro. alberto arroba alagoro punto com
- * @Descripción	
+ * @Descripción
+ *  Este script se ejecuta tanto por icron como desde la web.
+ *  Leer el fichero mdb y convertir los datos de las tablas que indicamos en sql
+ *  Tambien añadimos sql a las tablas del modulo eelectronica.
+ *  Tambien añadimos o modificamos los productos y categorias.
+ * 
  */
-$rutatpv = '/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/public/tpvfox';
-if (!file_exists($rutatpv . '/inicial.php')) {
-    $rutatpv = '/var/www/html/tpvfox';
-}
 
-file_exists($rutatpv . '/inicial.php') or die('ERROR: no existe fichero inicial.php');
 
-include_once $rutatpv . '/inicial.php';
+include_once './../../inicial.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/claseMDBExport.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/claseRegistroSistema.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEEArticulos.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/ClaseEECategorias.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/clasePasotestigo.php';
+include_once ($URLCom .'/controllers/parametros.php');
 
+$ClasesParametros = new ClaseParametros('parametros.xml');
+$parametros = $ClasesParametros->getRoot();
 
 $variable = time();
-if (file_exists('/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/public/index.php')) {
-    $ruta = '/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/csv/';
-    $rutapro = '/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/procesados';
-    $origen = '/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/mdbs';
-} else {
-    $ruta = '/var/www/html/tpvfox/BD/importar_eelectronica/csv';
-    $rutapro = '/var/www/html/tpvfox/BD/importar_eelectronica/procesados';
-    $origen = '/var/www/html/eelectronica/mdbs';
+
+// Obtenemos las rutas:
+$rutas = $ClasesParametros->ArrayElementos('configuracion');
+foreach ($rutas['ruta'] as $r ){
+    switch ($r->nombre) {
+        case 'sql':
+          $ruta = $r->valor;
+        break;
+
+        case 'procesado':
+           $rutapro = $r->valor;
+        break;
+
+        case 'origen':
+           $origen = $r->valor;
+        break;
+    }
+    if (is_dir($r->valor) === FALSE){
+        // Algo salio mal , ya que no existe la ruta.
+        error_log( 'Mal ruta Parametros.xml  '. $r->valor);
+        exit;
+    }
 }
 
 $tablas = [
@@ -37,12 +54,14 @@ $tablas = [
 //    'familiadto' => 'FamiliaDto',
     'articulos' => 'Articulos'
 ];
-
+// La funcion glob de php devuelve una matriz que contiene los ficheros/directorios coincidentes
+// una matriz vacía si no hubo ficheros coincidentes o FALSE si se produjo un error. 
 $ficherosmdb = glob($origen . '/*.mdb');
+
 if (count($ficherosmdb) > 0) {
     foreach ($ficherosmdb as $ficheromdb) {
         $elmdb = basename($ficheromdb);
-        $registroid = substr($elmdb, 3, 10);
+        $registroid = substr($elmdb, 3, 10); // Me quedo con el numero
         registroSistema::crear($registroid, 'mdbexport', $elmdb, 'inicio');
         $testigo = pasoTestigo::leerTestigo('mdbexport');
         registroSistema::crear($registroid, 'crear pasotestigo', pasoTestigo::getSQLConsulta(), pasoTestigo::getErrorConsulta());
@@ -50,10 +69,20 @@ if (count($ficherosmdb) > 0) {
             registroSistema::crear($registroid, 'fusionar', json_encode($testigo), 'está desbloqueado');            
             $idtestigo = $testigo['id'];
             pasoTestigo::bloquear($idtestigo, $registroid);
-            registroSistema::crear($registroid, 'fusionar', 'pasotestigo:'.$idtestigo, 'bloqueando');
+            registroSistema::crear($registroid, 'fusionar', 'pasotestigo:'.$idtestigo, 'bloqueando');            
             foreach ($tablas as $fichero => $tabla) {
                 $destino = $ruta . '/' . $fichero . '_' . $variable . '.sql';
-                exec('mdb-export -I mysql ' . $ficheromdb . ' ' . $tabla . ' > ' . $destino);
+                exec('mdb-export -I mysql ' . $ficheromdb . ' ' . $tabla . ' > ' . $destino, $valor,$ok);
+                if ($ok > 0){
+                    // Hubo un error , este error debería marcarse en registro de la tabla modulo_eelectronica_registro
+                    // ya que no se muestra resultado por pantalla. o Si.
+                    echo ' No existe o no funciona libreria mdb-export';
+                    echo '<pre>';
+                    print_r($ok);
+                    echo '</pre>';
+                    registroSistema::crear(0, 'mdbexport', 'mdb-tools', 'No existe o no funciona mdb-export');
+                    exit();
+                } 
                 $resultado = mdbexport::crear(['origen' => $ficheromdb, 'tabla' => $tabla, 'destino' => basename($destino)]);
                 registroSistema::crear($registroid, 'mdbexport', $destino, 'exec-->'.$resultado);
                 if ($resultado === false) {
@@ -97,6 +126,7 @@ if (count($ficherosmdb) > 0) {
             pasoTestigo::desbloquear($idtestigo);
             registroSistema::crear($registroid, 'fusionar', 'pasotestigo', 'desbloqueado');
         } else {
+            echo 'Bloqueado';
             registroSistema::crear($registroid, 'mdbexport', 'Ya existe proceso mdb export', 'No se procesa mdb:' . $elmdb);
         }
         rename($ficheromdb, $rutapro . '/' . $elmdb);
@@ -106,48 +136,3 @@ if (count($ficherosmdb) > 0) {
     registroSistema::crear(basename(__FILE__), 'ficherosmdb', $origen, 'No existen ficheros mdb');
 }
 echo 'Fin del todo ' . time();
-//    $ficheros = mdbexport::leerNoProcesados();
-//    return json_encode($ficheros);
-
-
-
-//$ficherossql = mdbexport::leerNoProcesados('Categorias');
-//if ($ficherossql) {
-//    foreach ($ficherossql as $ficherosql) {
-//        $idmdbexport = $ficherosql['id'];
-//        $destino = $ficherosql['destino'];
-//        $resactualizar = mdbexport::actualizar($idmdbexport, ['fechaInicio' => date(mdbexport::getFormatoFechaHoraSQL())]);
-//        $resultado = ClaseEECategorias::importar($destino);
-//        if ($resultado === false) {
-//            registroSistema::crear(basename(__FILE__), 'importar categorias', $destino, 'No existe fichero sql');
-//            mdbexport::actualizar($idmdbexport, ['fechaFin' => date(mdbexport::getFormatoFechaHoraSQL()), 'procesado' => -1]);
-//        } else {
-//            mdbexport::actualizar($idmdbexport, ['fechaFin' => date(mdbexport::getFormatoFechaHoraSQL()), 'procesado' => true]);
-//            rename($destino, $rutapro . '/csv/' . basename($destino));
-//        }
-//    }
-//} else {
-//    $resultado = registroSistema::crear(basename(__FILE__), 'mdbexport', mdbexport::getSQLConsulta(), mdbexport::getErrorConsulta());
-//}
-//
-//$ficherossql = mdbexport::leerNoProcesados('Articulos');
-//if ($ficherossql) {
-//    foreach ($ficherossql as $ficherosql) {
-//        $idmdbexport = $ficherosql['id'];
-//        $destino = $ficherosql['destino'];
-//        $resactualizar = mdbexport::actualizar($idmdbexport, ['fechaInicio' => date(mdbexport::getFormatoFechaHoraSQL())]);
-//        $resultado = ClaseEEArticulos::importar($destino);
-//        if ($resultado === false) {
-//            registroSistema::crear(basename(__FILE__), 'importar articulos', $destino, 'No existe fichero sql');
-//            mdbexport::actualizar($idmdbexport, ['fechaFin' => date(mdbexport::getFormatoFechaHoraSQL()), 'procesado' => -1]);
-//        } else {
-//            mdbexport::actualizar($idmdbexport, ['fechaFin' => date(mdbexport::getFormatoFechaHoraSQL()), 'procesado' => true]);
-//            rename($destino, $rutapro . '/csv/' . basename($destino));
-//        }
-//    }
-//} else {
-//    $resultado = registroSistema::crear(basename(__FILE__), 'mdbexport', mdbexport::getSQLConsulta(), mdbexport::getErrorConsulta());
-//}
-
-//var_dump(ClaseEECategorias::fusionar());
-//var_dump(ClaseEEArticulos::fusionar());
