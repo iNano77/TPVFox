@@ -8,18 +8,8 @@
  */
 
 
-$rutatpv = '/var/www/vhosts/tpvfox.com/eelectronica.tpvfox.com/public/tpvfox';
-if (!file_exists($rutatpv . '/inicial.php')) {
-    $rutatpv = '/var/www/html/tpvfox';
-}
 
-if (file_exists($rutatpv . '/configuracion.php') or die('ERROR: no existe fichero configuracion.php')) {
-    include_once ($rutatpv . '/configuracion.php');
-    if (file_exists($RutaServidor . $HostNombre)) {
-        $URLCom = $RutaServidor . $HostNombre;
-    }
-}
-
+include_once './../../inicial.php';
 include_once $URLCom . '/modulos/claseModeloP.php';
 include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/claseRegistroSistema.php';
 
@@ -53,8 +43,16 @@ class EEFotos extends ModeloP
 
     public static function leerLista($ruta = '')
     {
+        // @ Objetivo:
+        // Leer un directorior y obtener un array con las foto JPG o jpg haya.
+        // @ Parametros:
+        //  $ruta ->  (string) Ruta donde se encuentran las fotos originales.
+        // @ Devuelve:
+        // Array con los datos de las imagenes.
+       
         if ($ruta == '') {
-            $ruta = self::$rutaDatos . '/fotos';
+            // Valor por defecto.
+            $ruta = self::$rutaDatos;
         }
         $ficherosjpg = glob($ruta . '/*.jpg');
         $ficherosJPG = glob($ruta . '/*.JPG');
@@ -65,22 +63,26 @@ class EEFotos extends ModeloP
 
     public static function procesalista($destino = '')
     {
+        // @Objetivo
+        // Buscar que imagen tiene asociada cada articulo
+        // y remove a directorio de categoria (id) y cambiar el nombre
+        // con el id.
         if ($destino == '') {
             $destino = self::$rutaDatos . '/fotos';
         }
-        echo 'Destino: '.$destino . '<br>';
         $nuevalista = [];
         foreach (self::$ficheros as $indice => $ficherojpg) {
             $jpg = strtolower($ficherojpg);
             echo $jpg . '--->';
             $articulo = self::leerArticulo(basename($jpg, '.jpg'));
+            
             if ($articulo) {
                 $nuevalista[] = ['indice' => $indice, 'nombre' => basename($jpg), $articulo[0]];
                 $nuevaruta = $destino . '/' . $articulo[0]['idFamilia'];
                 if (!is_dir($nuevaruta)) {
                     mkdir($nuevaruta, 0777, true);
                 }
-                $nuevojpg = $nuevaruta . '/' . basename($jpg);
+                $nuevojpg = $nuevaruta . '/' . $articulo[0]['idArticulo'].'.jpg';
                 rename($ficherojpg, $nuevojpg);
                 echo $nuevojpg . '--->';
             }
