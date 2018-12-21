@@ -78,7 +78,8 @@ class EEFotos extends ModeloP
             
             if ($articulo) {
                 $nuevalista[] = ['indice' => $indice, 'nombre' => basename($jpg), $articulo[0]];
-                $nuevaruta = $destino . '/' . $articulo[0]['idFamilia'];
+                $idfamila3Caracter=  str_pad($articulo[0]['idFamilia'], 3, "0", STR_PAD_LEFT);
+                $nuevaruta = $destino . '/' . $idfamila3Caracter;
                 if (!is_dir($nuevaruta)) {
                     mkdir($nuevaruta, 0777, true);
                 }
