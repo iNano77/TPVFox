@@ -17,7 +17,7 @@ include_once ($RutaServidor . $HostNombre . '/plugins/plugins.php');
 
 class ClaseFamilias extends Modelo
 {
-
+    protected $tabla = 'familias';
     protected static $mitabla = 'familias';
     public $plugins;
     public $view;
