@@ -113,6 +113,9 @@ class ClaseEEArticulos extends ModeloP {
             ];
             $idArticuloTienda = alArticulosTienda::existeCRef($articuloEE['Art']);
             if (!$idArticuloTienda) {
+                registroSistema::crear(basename(__FILE__), 'fusionar articulos:No existe CRef'
+                            , 'consultaSQL'
+                            , 'erroresSQL');                        
                 $nuevoid = alArticulos::insertar($datos);
                 if ($nuevoid) {
                     $idArticuloTienda = $nuevoid;
@@ -148,13 +151,13 @@ class ClaseEEArticulos extends ModeloP {
                     $errores[] = ['existe cref', $articuloEE['Art'], alArticulos::getErrorConsulta(), alArticulos::getSQLConsulta()];
                 }
             } else {
-
+                // Lee los articulos con precios de la tienda sin iva
                 $articulotpv = alArticulos::leerArticuloTienda($idArticuloTienda, $idTienda);
                 if (count($articulotpv) > 0) {
                     $articulotpv = $articulotpv[0];
                     $actualizar = false;
-
-                    if (($articuloEE['idFamilia'] != 0) && (!alArticulos::existeArticuloFamilia($idArticuloTienda, $articuloEE['idFamilia']))) {
+                    if (($articuloEE['idFamilia'] != 0) 
+                            && (!alArticulos::existeArticuloFamilia($idArticuloTienda, $articuloEE['idFamilia']))) {
                         if (!alArticulos::borrarArticuloFamilia($idArticuloTienda, $articuloEE['idFamilia'])) {
                             $errores[] = ['borrar Art fam', alArticulos::getErrorConsulta(), alArticulos::getSQLConsulta()];
                         }
@@ -162,10 +165,13 @@ class ClaseEEArticulos extends ModeloP {
                             $errores[] = ['insert Art fam', alArticulos::getErrorConsulta(), alArticulos::getSQLConsulta()];
                         }
                         $actualizar = true;
+                        registroSistema::crear(basename(__FILE__), 'fusionar articulos:SI existe CRef. idfamilia!=0'
+                            , 'consultaSQL'
+                            , 'erroresSQL');                        
                     }
                     $md51 = self::calcularMD5([
                                 $articulotpv['ivaArticulo'],
-                                $articulotpv['descripcion']
+                                substr($articulotpv['descripcion'],0,100)
                     ]);
 
                     $articuloEE['iva'] = number_format($articuloEE['iva'], 2);
@@ -173,17 +179,28 @@ class ClaseEEArticulos extends ModeloP {
                                 $articuloEE['iva'],
                                 substr($articuloEE['Nom'], 0, 100)
                     ]);
+                    registroSistema::crear(basename(__FILE__), 'fusionar articulos:MD5'
+                            , $md51
+                            , $md52);                        
+
                     $actualizar = $actualizar || ($md51 != $md52);
 
                     if ($articuloEE['Stock'] != $articulotpv['stocktpv']) {
                         $actualizar = true;
                         $resultado = alArticulosStocks::actualizarStock($idArticuloTienda, $idTienda, $articuloEE['Stock'], K_STOCKARTICULO_REGULARIZA);
+                        registroSistema::crear(basename(__FILE__), 'fusionar articulos:stock'
+                            , $md51
+                            , $md52);                        
                     }
-                    if ($articuloEE['pvp'] != $articulotpv['pvptpv']) {
+                    if (number_format($articuloEE['pvp'], 2) != $articulotpv['pvptpv']) {
                         $actualizar = true;
-                        alArticulosPrecios::update(
-                                $idArticuloTienda, $idTienda, ['pvpSiva' => $articuloEE['pvp'],
-                            'pvpCiva' => self::SumaIva($articuloEE['pvp'], $articuloEE['iva'])]
+                        registroSistema::crear(basename(__FILE__), 'fusionar articulos:precios'
+                            , number_format($articuloEE['pvp'], 2)
+                            , $articulotpv['pvptpv']); 
+                        
+                        $resultado = alArticulosPrecios::update(
+                                $idArticuloTienda, $idTienda, ['pvpSiva' => number_format($articuloEE['pvp'], 2),
+                            'pvpCiva' => number_format(self::SumaIva($articuloEE['pvp'], $articuloEE['iva']), 2)]
                         );
                     }
 

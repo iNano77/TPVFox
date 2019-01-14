@@ -5,7 +5,7 @@
  * @Autor Alberto Lago Rodríguez. Alagoro. alberto arroba alagoro punto com
  * @Descripción
  *  Este script se ejecuta tanto por icron como desde la web.
- *  Leer el fichero mdb y convertir los datos de las tablas que indicamos en sql
+ *  Leer el fichero mdb /var/www/htmly conver/var/www/htmltir los datos de las tablas que indicamos en sql
  *  Tambien añadimos sql a las tablas del modulo eelectronica.
  *  Tambien añadimos o modificamos los productos y categorias.
  * 
@@ -104,7 +104,7 @@ if (count($ficherosmdb) > 0) {
                             $resultado = ClaseEECategorias::importar($ficherosql, $registroid);
                             registroSistema::crear($registroid, 'importar categorias', basename($ficherosql), 'fin:'.time());
                             registroSistema::crear($registroid, 'fusionar categorias', basename($ficherosql), 'inicio:'.time());
-                            ClaseEECategorias::fusionar();
+                            ClaseEECategorias::fusionar($registroid, basename($ficherosql));
                             registroSistema::crear($registroid, 'fusionar categorias', basename($ficherosql), 'fin:'.time());
                         } elseif (strpos($fichero, 'articulos') !== FALSE) {
                             registroSistema::crear($registroid, 'importar articulos', basename($ficherosql), 'inicio');

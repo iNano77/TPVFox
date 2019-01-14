@@ -11,10 +11,10 @@ Numero tecla:
 <parametros>
 	<configuracion>
 		<!-- Campos a mostrar en lista de producto -->
-		<ruta nombre="sql" >/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/sql</ruta>
-        <ruta nombre="procesado">/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/procesados</ruta>
-        <ruta nombre="origen">/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/mdbs</ruta>
-        <ruta nombre="origen_fotos">/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/fotos_originales</ruta>
+        <ruta nombre="sql" >/var/www/html/datos/sql</ruta>
+        <ruta nombre="procesado">/var/www/html/datos/procesados</ruta>
+        <ruta nombre="origen">/var/www/html/datos/mdbs</ruta>
+        <ruta nombre="origen_fotos">/var/www/html/datos/fotos_originales</ruta>
 
 	</configuracion>
 	

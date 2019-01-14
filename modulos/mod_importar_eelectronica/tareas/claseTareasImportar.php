@@ -32,14 +32,14 @@ class tareasImportar {
             $registros = registroSistema::leerXFichero($testigo['origen']);
             if ($registros) {
                 foreach ($registros as $registro) {
-                    $tabla[] = [$testigo['testigo'], $registro['accion'], $registro['error'], '', '', ''];
+                    array_unshift($tabla, [$testigo['testigo'], $registro['accion'], $registro['error'], '', '', '']);
                     if ($registro['accion'] == 'fusionar articulos') {
                         $fusiones = fusion::leerOrigen($testigo['origen'], 'fusion articulos');
                         if ($fusiones) {
                             $fusion = $fusiones[0];
-                            $tabla[] = [$testigo['testigo'], $fusion['accion']
+                            array_unshift($tabla, [$testigo['testigo'], $fusion['accion']
                                 , 'Insertados', $fusion['numRegistro']
-                                , 'de', $fusion['totalRegistros']];
+                                , 'de', $fusion['totalRegistros']]);
                         }
                     }
                 }

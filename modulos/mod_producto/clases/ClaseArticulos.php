@@ -65,7 +65,7 @@ class alArticulos extends Modelo
         $sql = 'SELECT art.idArticulo '
             . ', art.iva as ivaArticulo '
             . ', art.articulo_name as descripcion '
-            . ', pre.pvpCiva as pvptpv'
+            . ', pre.pvpSiva as pvptpv'
             . ', stoc.stockOn as stocktpv' 
             . ' FROM articulos AS art '
             . ' LEFT OUTER JOIN articulosPrecios AS pre ON (art.idArticulo=pre.idArticulo) '

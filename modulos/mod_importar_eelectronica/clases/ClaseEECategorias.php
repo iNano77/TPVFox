@@ -53,11 +53,11 @@ class ClaseEECategorias extends ModeloP
         return false;
     }
 
-    public static function fusionar()
+    public static function fusionar($registroid, $ficherosql)
     {
         $categorias = self::leer();
         $idTienda = 1;
-        $errores = [];
+        $errores = [];        
         foreach ($categorias as $categoriaEE) {
             $datos = [
                 'familiaNombre' => $categoriaEE['Cat'],
