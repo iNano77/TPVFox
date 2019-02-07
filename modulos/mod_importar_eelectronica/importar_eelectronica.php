@@ -13,7 +13,7 @@
     $ClasesParametros = new ClaseParametros('parametros.xml');
     $parametros = $ClasesParametros->getRoot();
     $conf_defecto = $ClasesParametros->ArrayElementos('configuracion');
-    foreach ($rutas['ruta'] as $r ){
+    foreach ($conf_defecto['ruta'] as $r ){
         switch ($r->nombre) {
             case 'sql':
               $ruta = $r->valor;
@@ -27,7 +27,7 @@
         }
         if (is_dir($r->valor) === FALSE){
             // Algo salio mal , ya que no existe la ruta.
-            error_log( 'Mal ruta Parametros.xml  '. $r->valor);
+            echo  'Mal ruta Parametros.xml  '. $r->valor;
             exit;
         }
     }
