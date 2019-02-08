@@ -45,7 +45,6 @@ class pasoTestigo extends ModeloP {
     }
 
     public static function leer($id) {
-        echo '1';
         $resultado = parent::_leer(self::$tabla, ['id=' . $id]);
         if($resultado && count($resultado)==1){
             $resultado = $resultado[0];
