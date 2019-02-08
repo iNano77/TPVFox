@@ -10,11 +10,14 @@
     $testigo = pasoTestigo::leerTestigo('mdbexport');
     $command = 'ps aux | grep "[p]hp.*fusionar_eelectronica"';
     exec($command ,$ejecutando); // Compruebo si se esta ejecutando fusionar_eelectronica.php
-    if ($testigo <> count($ejecutando)){
+    if ($testigo['estado'] <> count($ejecutando)){
         // Quiere decir que está bloqueado y no se esta ejecutando o viceversa..
         // Ejecutando debe ser un array 0 si no se esta ejecutando.
         // Algo salio mal , ya que no existe la ruta.
-        echo  'Algo esta mal ya que testigo es:'. $testigo;
+        echo  'Algo esta mal ya que testigo es:';
+        echo '<pre>';
+        print_r($testigo);
+        echo '</pre>';
         echo  ' Y se esta ejecutando:';
         echo '<pre>';
         print_r($ejecutando);
