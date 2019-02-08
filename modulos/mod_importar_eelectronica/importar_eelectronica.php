@@ -8,7 +8,19 @@
     include ($URLCom.'/controllers/Controladores.php');
     include_once $URLCom . '/modulos/mod_importar_eelectronica/clases/clasePasotestigo.php';
     $testigo = pasoTestigo::leerTestigo('mdbexport');
-
+    $command = 'ps aux | grep "[p]hp.*fusionar_eelectronica"';
+    exec($command ,$ejecutando); // Compruebo si se esta ejecutando fusionar_eelectronica.php
+    if ($testigo <> count($ejecutando)){
+        // Quiere decir que está bloqueado y no se esta ejecutando o viceversa..
+        // Ejecutando debe ser un array 0 si no se esta ejecutando.
+        // Algo salio mal , ya que no existe la ruta.
+        echo  'Algo esta mal ya que testigo es:'. $testigo;
+        echo  ' Y se esta ejecutando:';
+        echo '<pre>';
+        print_r($ejecutando);
+        echo '</pre>';
+        exit;
+    }
     include_once ($URLCom.'/controllers/parametros.php');
     $ClasesParametros = new ClaseParametros('parametros.xml');
     $parametros = $ClasesParametros->getRoot();
