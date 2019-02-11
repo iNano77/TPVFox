@@ -24,6 +24,7 @@
         echo '</pre>';
         exit;
     }
+    
     include_once ($URLCom.'/controllers/parametros.php');
     $ClasesParametros = new ClaseParametros('parametros.xml');
     $parametros = $ClasesParametros->getRoot();
@@ -46,6 +47,10 @@
             exit;
         }
     }
+    
+    // Compruebo que exista fichero mdb en directorio indicado en parametros.
+    $ficherosmdb = glob($origen . '/*.mdb');
+   
    ?>
    <script type="text/javascript" src="<?php echo $HostNombre; ?>/modulos/mod_importar_eelectronica/funciones.js"></script>
 
@@ -66,7 +71,21 @@
                     <li>Tambien añadimos sql a las tablas del modulo eelectronica.</li>
                     <li>Añadimos o modificamos los datos tablas a TpvFox</li>
                 </ol> 
-                <p><a onclick="iniciarImportarFusion()">Empezar</a></p>
+                <p>
+					<?php 
+					$link = '<a onclick="iniciarImportarFusion()">Empezar</a>';
+					
+					if (count($ficherosmdb) === 0) 
+					{
+						$link = '<div class="alert alert-danger"> No existe mdb en origen</div>';
+					}
+					if (count($ejecutando) > 0)
+					{
+						$link=' <div class="alert alert-info">Se está ejecutando</div>';
+					}
+					echo $link;
+					?>
+				</p>
             </div>
         </div>
         <div class="col-md-3">
