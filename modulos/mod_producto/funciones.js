@@ -100,7 +100,7 @@ function metodoClick(pulsado,adonde){
 				return
 			}
 			// Ahora redireccionamos 
-			window.location.href = './'+adonde+'.php?id='+checkID[0];			
+			window.location.href = './view/'+adonde+'.php?id='+checkID[0];			
 			
 			break;
 		case 'EtiquetasCodBarras':
@@ -118,7 +118,7 @@ function metodoClick(pulsado,adonde){
 		
 		case 'AgregarProducto':
 			console.log('entro en agregar producto');
-			window.location.href = './producto.php';
+			window.location.href = '.view/producto.php';
 			
 			break;
 		
@@ -943,7 +943,7 @@ function eliminarSeleccionProductos(){
 function UnProductoClick(id){
 	// @ Objetivo:
 	// Hizo click en id o Nombre de producto, por lo que lo mostramos.
-	window.location.href = './producto.php?id='+id;
+	window.location.href = './view/producto.php?id='+id;
 	
 }
 

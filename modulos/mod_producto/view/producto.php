@@ -2,7 +2,7 @@
 <html>
     <head>
         <?php
-        include_once './../../inicial.php';
+        include_once './../../../inicial.php';
         include_once $URLCom.'/head.php';
         include_once $URLCom.'/modulos/mod_producto/funciones.php';
         include_once $URLCom.'/controllers/Controladores.php';
@@ -14,7 +14,7 @@
 		$Controler->loadDbtpv($BDTpv);
 		// Cargamos los fichero parametros y creamos objeto parametros..
 		include_once ($URLCom.'/controllers/parametros.php');
-		$ClasesParametros = new ClaseParametros('parametros.xml');
+		$ClasesParametros = new ClaseParametros('./../parametros.xml');
 		$parametros = $ClasesParametros->getRoot();
 		// Cargamos configuracion modulo tanto de parametros (por defecto) como si existen en tabla modulo_configuracion 
 		$conf_defecto = $ClasesParametros->ArrayElementos('configuracion');
@@ -37,7 +37,7 @@
 			$titulo .= "Crear";
 		}
 		if ($_POST){
-			include_once ('./tareas/reciboPostProducto.php');
+			include_once ($URLCom.'/modulos/mod_producto/tareas/reciboPostProducto.php');
 		}
 		// Obtenemos los datos del id, si es 0, quiere decir que es nuevo.
 		$Producto = $CTArticulos->GetProducto($id);
@@ -407,16 +407,12 @@
               $("#tfamilias a").hide();
             <?php
         }
-         if($ClasePermisos->getAccion("verProductosTienda")==0){
-             ?>
-              $("#tproveedor a").hide();
-            <?php
-         }
-           if($ClasePermisos->getAccion("verHistoricoPrecios")==0){
-              ?>
-                $("#thitorico a").hide();
-              <?php 
-           }
+        
+        if($ClasePermisos->getAccion("verHistoricoPrecios")==0){
+            ?>
+               $("#thitorico a").hide();
+             <?php 
+        }
         ?>
     </script> 
         <style>

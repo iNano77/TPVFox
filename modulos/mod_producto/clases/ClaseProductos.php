@@ -606,51 +606,55 @@ class ClaseProductos extends ClaseTablaArticulos{
 		// Eliminamos del array los elementos que no vamos comprobar.
 		$elementos_descartados = array('fechaActualizacion','estado','nombrecomercial','razonsocial');
 		// --- 		Comprobamos si se modifico			  --- //
-		foreach ($proveedores_costes_sin as $key=>$p){
-			foreach ($elementos_descartados as $elemento){
-				unset($p[$elemento]);
-			}
-			// Ahora tenemos que buscar el mismo proveedor en los datos recibidos.
-			foreach ($datosProveedores as $k=>$datos){
-				if ($datos['idProveedor'] === $p['idProveedor']){
-					// Es el mismo proveedor, comprobamos si tiene los mismos datos.
-					if ( serialize($p) === serialize($datos) ){
-						// tiene los mismos datos por lo que debemos eliminarlo de $datosProveedores.
-						// ya que no vamos hacer nada.
-						unset($datosProveedores[$k]);
-					} else {
-						// Se modifico el proveedor...
-						$datosProveedores[$k]['estado'] =$proveedores_costes_sin[$key]['estado']; // Mantengo el mismo estado.
-						$datosProveedores[$k]['se_hizo'] = 'modificado';
-					}
-				}
-			}
-		}
+        if ($proveedores_costes_sin !== NULL){
+            foreach ($proveedores_costes_sin as $key=>$p){
+                foreach ($elementos_descartados as $elemento){
+                    unset($p[$elemento]);
+                }
+                // Ahora tenemos que buscar el mismo proveedor en los datos recibidos.
+                foreach ($datosProveedores as $k=>$datos){
+                    if ($datos['idProveedor'] === $p['idProveedor']){
+                        // Es el mismo proveedor, comprobamos si tiene los mismos datos.
+                        if ( serialize($p) === serialize($datos) ){
+                            // tiene los mismos datos por lo que debemos eliminarlo de $datosProveedores.
+                            // ya que no vamos hacer nada.
+                            unset($datosProveedores[$k]);
+                        } else {
+                            // Se modifico el proveedor...
+                            $datosProveedores[$k]['estado'] =$proveedores_costes_sin[$key]['estado']; // Mantengo el mismo estado.
+                            $datosProveedores[$k]['se_hizo'] = 'modificado';
+                        }
+                    }
+                }
+            }
+        }
 		//  ----  Ahora monstamos SQL  para grabar ----- //
 		$comprobaciones = array();
-		foreach ($datosProveedores as $k=>$datos){
-			if (!isset($datos['se_hizo'])){
-				//  Es nuevo registro coste proveedor, le añadimos el estado y fecha actualizacion 
-				$datosProveedores[$k]['estado'] = 'Activo';
-				$datosProveedores[$k]['se_hizo'] = 'nuevo';
-				// Montamos Sql insert ya que es nuevo.
-				$sql = 'INSERT INTO `articulosProveedores`(`idArticulo`, `idProveedor`, `crefProveedor`,
-                 `coste`, `fechaActualizacion`, `estado`) VALUES ('.$datos['idArticulo'].','
-                 .$datos['idProveedor'].',"'.$datos['crefProveedor'].'","'.$datos['coste']
-                 .'",NOW(),"'.'Tarifa'.'")';
-               
-				$comprobaciones['nuevo'][]=$this->Consulta_insert_update($sql);
-			} else {
-				// Es modificado montamos sql update
-				$sql = 'UPDATE `articulosProveedores` SET `idArticulo`='
-						.$datos['idArticulo'].',`idProveedor`='.$datos['idProveedor'].',`crefProveedor`="'
-						.$datos['crefProveedor'].'",`coste`="'.$datos['coste']
-						.'",`fechaActualizacion`= NOW(),`estado`="'.$datos['estado'].'" WHERE idArticulo = '
-						.$datos['idArticulo'].' AND idProveedor ='.$datos['idProveedor'];
-				$comprobaciones['modificado'][]=$this->Consulta_insert_update($sql);
+        if (count($datosProveedores)>0){
+            foreach ($datosProveedores as $k=>$datos){
+                if (!isset($datos['se_hizo'])){
+                    //  Es nuevo registro coste proveedor, le añadimos el estado y fecha actualizacion 
+                    $datosProveedores[$k]['estado'] = 'Activo';
+                    $datosProveedores[$k]['se_hizo'] = 'nuevo';
+                    // Montamos Sql insert ya que es nuevo.
+                    $sql = 'INSERT INTO `articulosProveedores`(`idArticulo`, `idProveedor`, `crefProveedor`,
+                     `coste`, `fechaActualizacion`, `estado`) VALUES ('.$datos['idArticulo'].','
+                     .$datos['idProveedor'].',"'.$datos['crefProveedor'].'","'.$datos['coste']
+                     .'",NOW(),"'.'Tarifa'.'")';
+                   
+                    $comprobaciones['nuevo'][]=$this->Consulta_insert_update($sql);
+                } else {
+                    // Es modificado montamos sql update
+                    $sql = 'UPDATE `articulosProveedores` SET `idArticulo`='
+                            .$datos['idArticulo'].',`idProveedor`='.$datos['idProveedor'].',`crefProveedor`="'
+                            .$datos['crefProveedor'].'",`coste`="'.$datos['coste']
+                            .'",`fechaActualizacion`= NOW(),`estado`="'.$datos['estado'].'" WHERE idArticulo = '
+                            .$datos['idArticulo'].' AND idProveedor ='.$datos['idProveedor'];
+                    $comprobaciones['modificado'][]=$this->Consulta_insert_update($sql);
 
-			}
-		}
+                }
+            }
+        }
 		//	----- 		EJECUTAMOS SQLS 		---- //
 		
 		
