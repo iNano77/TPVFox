@@ -95,6 +95,15 @@
                 <p><a href="progresoImportar.php">Empezar</a></p>
             </div>
         </div>
+         <div class="col-md-3">
+            <div style="margin: 1%;padding:3%;border-radius:10px;background-color:#f3f3f6;">
+                <h3>Crear directorios con imagenes de productos</h3>
+                <p> Indicando donde estan la imagenes de los productos, ruta que indica en parametros, creamos dentro de esa ruta un directorio llamado fotos y subdirectorios dentro con id de las familias.<br/>
+                Movemos las imagenes del directorio original al directorio de cada familia.
+                </p>
+                <p><a href="importarFotos_eelectronica.php">Empezar</a></p>
+            </div>
+        </div>
         
     </div>
 </body>

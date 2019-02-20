@@ -73,9 +73,8 @@ class EEFotos extends ModeloP
         $nuevalista = [];
         foreach (self::$ficheros as $indice => $ficherojpg) {
             $jpg = strtolower($ficherojpg);
-            echo $jpg . '--->';
+            echo basename($jpg, '.jpg'). '---- Movido --->';
             $articulo = self::leerArticulo(basename($jpg, '.jpg'));
-            
             if ($articulo) {
                 $nuevalista[] = ['indice' => $indice, 'nombre' => basename($jpg), $articulo[0]];
                 $idfamila3Caracter=  str_pad($articulo[0]['idFamilia'], 3, "0", STR_PAD_LEFT);
