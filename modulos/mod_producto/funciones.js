@@ -23,7 +23,55 @@ $(function () {
             $("#stockcolocar").val(final);
         }
     });
+    $('#busquedaModal').on('shown.bs.modal', function() {
+          //@Objetivo: llamar a la librería autocomplete 
+        $( ".familias" ).combobox({
+            select : function(event, ui){ 
+                var idProducto= $( "#idProductoModal" ).val();
+                var botonhtml='<button class="btn btn-primary" onclick="guardarProductoFamilia('+ui.item.value+', '+idProducto+')">Guardar</button>';
+                if(idProducto==0){
+                    $('#botonEnviar2').html(botonhtml);  
+                }else{
+                    $('#botonEnviar').html(botonhtml);  
+                }
+            },
+        });
+        $( ".estados" ).combobox({
+            select : function(event, ui){ 
+            var idProductos= $( "#idProductosModal" ).val();  
+            var botonhtml='<button class="btn btn-primary" onclick="modificarEstadoProductos('+"'"+ui.item.value+"'"+', '+"'"+idProductos+"'"+')">Guardar</button>';
+             
+                $('#botonEnviarEstados').html(botonhtml);  
+            
+            },
+        
+           
+        });
+    });
+    //@Objetivo: llamar a la librería autocomplete 
+    if( $("select").hasClass("familiasLista")){
+        $( ".familiasLista" ).combobox({
+            select : function(event, ui){ 
+                //~ var idProducto= $( "#idProductoModal" ).val();
+                 var botonhtml='<a class="btn btn-primary" onclick="buscarProductosFamilia('+ui.item.value+')">Buscar</a>';
+               $('#botonEnviar').html(botonhtml);   
+            },
+           
+           
+        });
+        $( ".proveedoresLista" ).combobox({
+            select : function(event, ui){ 
+                //~ var idProducto= $( "#idProductoModal" ).val();
+                 var botonhtml='<a class="btn btn-primary" onclick="buscarProductosProveedor('+ui.item.value+')">Buscar</a>';
+               $('#botonEnviarPro').html(botonhtml);   
+            },
+        });
+    }
+    $( "#toggle" ).on( "click", function() {
+        $( "#combobox" ).toggle();
+    });
 });
+
 
 //recogemos valor de la caja de busqueda que tenemos en Listado tickets o productos
 function BuscarProducto (){
@@ -77,10 +125,6 @@ function BuscarProveedor (dedonde,busqueda=''){
 			focusAlLanzarModal('cajaBusquedaproveedor');
 		}
 	});
-	
-	
-	
-	
 }
 
 
@@ -272,29 +316,7 @@ function recalcularPrecioSegunCosteBeneficio (caja){
 
 	$('#pvpSiva').val(precioSiva.toFixed(2));
 	$('#pvpCiva').val(precioCiva.toFixed(2));
-	
-	
-	
-	
 
-
-}
-
-function destacarCambioCaja(idcaja){
-	$("#"+idcaja).css("outline-style","solid");
-	$("#"+idcaja).css("outline-color","coral");
-	$("#"+idcaja).animate({
-			"opacity": "0.3"
-		 },2000);
-	t = setTimeout(volverMostrar,2000,idcaja);
-	
-}
-function volverMostrar(idcaja){
-	console.log('Entro volver mostrar');
-	$("#"+idcaja).animate({
-			"opacity": "1"
-		 },1000);
-	$("#"+idcaja).css("outline-color","transparent")
 }
 
 function recalcularPvp(dedonde){
@@ -325,6 +347,25 @@ function recalcularPvp(dedonde){
 	
 	
 }
+
+function destacarCambioCaja(idcaja){
+	$("#"+idcaja).css("outline-style","solid");
+	$("#"+idcaja).css("outline-color","coral");
+	$("#"+idcaja).animate({
+			"opacity": "0.3"
+		 },2000);
+	t = setTimeout(volverMostrar,2000,idcaja);
+	
+}
+function volverMostrar(idcaja){
+	console.log('Entro volver mostrar');
+	$("#"+idcaja).animate({
+			"opacity": "1"
+		 },1000);
+	$("#"+idcaja).css("outline-color","transparent")
+}
+
+
 
 function obtenerIva(){
 	// @ Objetivo
@@ -403,7 +444,6 @@ function AnhadirCodbarras(){
 		});
 		
 	}
-	
 }
 
 function GuardarConfiguracion(obj){
@@ -425,6 +465,7 @@ function GuardarConfiguracion(obj){
 	// Recargo pagina en un 1 s.
 	setTimeout(refresh,1000);
 }
+
 function AjaxGuardarConfiguracion(){
 	// Objetivo:
 	// Guardar configuracion de usuario y modulo.
@@ -445,11 +486,9 @@ function AjaxGuardarConfiguracion(){
 				var resultado = response;
 				return resultado ;
 			}
-			
 	});
-	
-	
 }
+
 function CambiarConfiguracionMostrarLista(valor,nombre){
 	// Ahora cambiamos el valor configuracion.
 	configuracion.mostrar_lista.forEach(function(element) {
@@ -568,125 +607,6 @@ function cambioEstadoProvPrincipal(obj){
 		
 	}
 	
-}
-
-// ---------------------------------  Funciones control de teclado ----------------------------------------------- //
-
-function after_constructor(padre_caja,event){
-	// @ Objetivo:
-	// Ejecuta procesos antes construir el obj. caja. ( SI ANTES) Se fue pinza.. :-)
-	// Traemos 
-	//		(objeto) padre_caja -> Que es objeto el padre del objeto que vamos a crear 
-	//		(objeto) event -> Es la accion que hizo, que trae todos los datos input,button , check.
-	console.log("entre aqui");
-	console.log(event);
-	if (padre_caja.id_input.indexOf('pvpRecomendado') >-1){
-		padre_caja.id_input = event.originalTarget.id;
-	}
-	return padre_caja;
-}
-
-function before_constructor(caja){
-	// @ Objetivo :
-	//  Ejecutar procesos para obtener datos despues del construtor de caja. ( SI DESPUES ) :-)
-	//  Estos procesos los indicamos en parametro before_constructor, si hay
-	console.log( 'Entro en before');
-	if (caja.id_input.indexOf('pvpRecomendado_') >-1){
-		caja.fila = caja.id_input.slice(15);
-	}
-    return caja;	
-}
-
-
-
-function controladorAcciones(caja,accion, tecla){
-	console.log('Entro en controlador de acciones');
-	switch(accion) {
-		case 'revisar_contenido':
-			validarEntradaNombre(caja);
-		break;
-
-		case 'controlReferencia':
-            comprobarReferencia();
-		break;
-
-		case 'salto':
-			console.log("Estoy en buscar controladorAcciones-> salto + caja:");
-			console.log(caja);
-		break;
-		
-		case 'salto_recalcular':
-			
-			var re= comprobarNumero(caja.darValor());
-			if ( re === true){
-				recalcularPrecioSegunCosteBeneficio(caja);
-			}
-		break
-		
-		case 'recalcularPvp':
-			var re= comprobarNumero(caja.darValor());
-			if ( re === true){
-				recalcularPvp(caja.id_input);
-			}
-		break
-		
-		case 'controlCosteProv':
-			caja.id_input = caja.name_cja;
-			console.log(caja.darValor());
-			var re= comprobarNumero(caja.darValor());
-			console.log(re);
-			if ( re === false){
-				alert( 'Error en el coste, fijate bien');
-			} else {
-				// Volvemos a ponerla solo lectura.
-				bloquearCajaProveedor(caja);
-			}
-		break
-		
-		case 'controlCodBarras':
-			caja.id_input = caja.name_cja;
-			var codb = caja.darValor();
-			if (codb.length>0){
-				// No ejecuto si no hay codigo introducido.
-				controlCodBarras(caja);
-			}
-		break;
-		
-		
-		case 'buscarProveedor':
-			// Solo venimos a esta accion cuando pulsamos intro cajaBusquedaproveedor
-			// entonce enviamos dedonde=popup, el buscar=Valor cja... que puede ser vacio.. 
-			var buscar = caja.darValor();
-			var dedonde = 'popup';
-			BuscarProveedor (dedonde,buscar)
-		break;
-		case 'mover_down':
-			// Controlamos si numero fila es correcto.
-			console.log(caja);
-			var nueva_fila = 0;
-			if ( isNaN(caja.fila) === false){
-				nueva_fila = parseInt(caja.fila)+1;
-			} 
-			console.log('mover_down:'+nueva_fila);
-			mover_down(nueva_fila,caja.darParametro('prefijo'));
-			
-		break;
-		case 'mover_up':
-			console.log( 'Accion subir 1 desde fila'+caja.fila);
-			var nueva_fila = 0;
-			
-			if ( isNaN(caja.fila) === false){
-				nueva_fila = parseInt(caja.fila)-1;
-			}
-			mover_up(nueva_fila,caja.darParametro('prefijo'));
-			
-		break;
-
-        default:
-            console.log( ' No hubo accion a realizar,accion pedida '+accion);
-        break;
-	}
-		
 }
 
 
@@ -967,25 +887,6 @@ function filtrarSeleccionProductos(){
 	AjaxGuardarConfiguracion();
 	location.href="ListaProductos.php";
 }
-function mover_up(fila,prefijo){
-	var d_focus = prefijo+fila;
-	ponerSelect(d_focus);
-	
-}
-function mover_down(fila,prefijo){
-	var d_focus = prefijo+fila;
-	ponerSelect(d_focus);
-}
-function ponerSelect (destino_focus){
-	// @ Objetivo:
-	// 	Poner focus a donde nos indique el parametro, que debe ser id queremos apuntar.
-	console.log('Entro en ponerselects de :'+destino_focus);
-	setTimeout(function() {   //pongo un tiempo de focus ya que sino no funciona correctamente
-		jQuery('#'+destino_focus.toString()).select(); 
-	}, 50); 
-
-}
-
 
 function comprobarReferencia(){
 		var referencia=$("#referencia").val();
@@ -1111,68 +1012,7 @@ function modalEstadoProductos(){
 	});
 }
 
-$( function() {
-     $('#busquedaModal').on('shown.bs.modal', function() {
-      //@Objetivo: llamar a la librería autocomplete 
-    $( ".familias" ).combobox({
-        select : function(event, ui){ 
-            
-        var idProducto= $( "#idProductoModal" ).val();
-          
-        var botonhtml='<button class="btn btn-primary" onclick="guardarProductoFamilia('+ui.item.value+', '+idProducto+')">Guardar</button>';
-         if(idProducto==0){
-            $('#botonEnviar2').html(botonhtml);  
-         }else{
-             $('#botonEnviar').html(botonhtml);  
-         }
-          
-          
-         
-        },
-       
-       
-    });
-     $( ".estados" ).combobox({
-        select : function(event, ui){ 
-        var idProductos= $( "#idProductosModal" ).val();  
-        var botonhtml='<button class="btn btn-primary" onclick="modificarEstadoProductos('+"'"+ui.item.value+"'"+', '+"'"+idProductos+"'"+')">Guardar</button>';
-         
-            $('#botonEnviarEstados').html(botonhtml);  
-         
-          
-          
-         
-        },
-       
-       
-    });
-});
 
-      //@Objetivo: llamar a la librería autocomplete 
-     if( $("select").hasClass("familiasLista")){
-        $( ".familiasLista" ).combobox({
-            select : function(event, ui){ 
-                //~ var idProducto= $( "#idProductoModal" ).val();
-                 var botonhtml='<a class="btn btn-primary" onclick="buscarProductosFamilia('+ui.item.value+')">Buscar</a>';
-               $('#botonEnviar').html(botonhtml);   
-            },
-           
-           
-        });
-     $( ".proveedoresLista" ).combobox({
-            select : function(event, ui){ 
-                //~ var idProducto= $( "#idProductoModal" ).val();
-                 var botonhtml='<a class="btn btn-primary" onclick="buscarProductosProveedor('+ui.item.value+')">Buscar</a>';
-               $('#botonEnviarPro').html(botonhtml);   
-            },
-           
-           
-        });
-    }
-     $( "#toggle" ).on( "click", function() {
-        $( "#combobox" ).toggle();
-    });
-  } );
   
 function modificarEstadoProductos(estado, productos){
     var parametros = {
@@ -1265,6 +1105,7 @@ function buscarProductosFamilia(idFamilia){
             }	
         });
 }
+
 function buscarProductosProveedor(idProveedor){
       var parametros = {
             pulsado: 'buscarProductosProveedor',
@@ -1291,14 +1132,13 @@ function buscarProductosProveedor(idProveedor){
 }
 
 function EliminarHistorico(idHistorico, e){
-   var mensaje = confirm("¿Estás seguro que quieres eliminar este registro de historico?");
+    var mensaje = confirm("¿Estás seguro que quieres eliminar este registro de historico?");
 	if (mensaje) {
-    
-    var parametros = {
-        pulsado: 'eliminarHistorico',
-        idHistorico:idHistorico
-    }
-     $.ajax({
+        var parametros = {
+            pulsado: 'eliminarHistorico',
+            idHistorico:idHistorico
+        }
+        $.ajax({
             data       : parametros,
             url        : 'tareas.php',
             type       : 'post',
@@ -1425,6 +1265,7 @@ function seleccionProductos(){
         $("#checkSeleccion").prop( "checked", false );
     }
 }
+
 function busquedaSinCheck(){
     configuracion.filtro.valor='No';
     AjaxGuardarConfiguracion();
@@ -1448,7 +1289,6 @@ function obtenerFechas(){
 function redirecionarMayor(idArticulo,adonde){
     // Objetivo:
     // El objetivo es redireccionar a la vista de Mayor o generar el informe
-
     // Obtenemos Fechas de cajas:
     Fechas = obtenerFechas();
     if (adonde === 'DetalleMayor'){
@@ -1456,4 +1296,141 @@ function redirecionarMayor(idArticulo,adonde){
         window.open(href,'_blank')
 
     }
+}
+
+// ---------------------------------  Funciones control de teclado ----------------------------------------------- //
+
+function after_constructor(padre_caja,event){
+	// @ Objetivo:
+	// Ejecuta procesos antes construir el obj. caja. ( SI ANTES) Se fue pinza.. :-)
+	// Traemos 
+	//		(objeto) padre_caja -> Que es objeto el padre del objeto que vamos a crear 
+	//		(objeto) event -> Es la accion que hizo, que trae todos los datos input,button , check.
+	console.log("entre aqui");
+	console.log(event);
+	if (padre_caja.id_input.indexOf('pvpRecomendado') >-1){
+		padre_caja.id_input = event.originalTarget.id;
+	}
+	return padre_caja;
+}
+
+function before_constructor(caja){
+	// @ Objetivo :
+	//  Ejecutar procesos para obtener datos despues del construtor de caja. ( SI DESPUES ) :-)
+	//  Estos procesos los indicamos en parametro before_constructor, si hay
+	console.log( 'Entro en before');
+	if (caja.id_input.indexOf('pvpRecomendado_') >-1){
+		caja.fila = caja.id_input.slice(15);
+	}
+    return caja;	
+}
+
+
+
+function controladorAcciones(caja,accion, tecla){
+	console.log('Entro en controlador de acciones');
+	switch(accion) {
+		case 'revisar_contenido':
+			validarEntradaNombre(caja);
+		break;
+
+		case 'controlReferencia':
+            comprobarReferencia();
+		break;
+
+		case 'salto':
+			console.log("Estoy en buscar controladorAcciones-> salto + caja:");
+			console.log(caja);
+		break;
+		
+		case 'salto_recalcular':
+			
+			var re= comprobarNumero(caja.darValor());
+			if ( re === true){
+				recalcularPrecioSegunCosteBeneficio(caja);
+			}
+		break
+		
+		case 'recalcularPvp':
+			var re= comprobarNumero(caja.darValor());
+			if ( re === true){
+				recalcularPvp(caja.id_input);
+			}
+		break
+		
+		case 'controlCosteProv':
+			caja.id_input = caja.name_cja;
+			console.log(caja.darValor());
+			var re= comprobarNumero(caja.darValor());
+			console.log(re);
+			if ( re === false){
+				alert( 'Error en el coste, fijate bien');
+			} else {
+				// Volvemos a ponerla solo lectura.
+				bloquearCajaProveedor(caja);
+			}
+		break
+		
+		case 'controlCodBarras':
+			caja.id_input = caja.name_cja;
+			var codb = caja.darValor();
+			if (codb.length>0){
+				// No ejecuto si no hay codigo introducido.
+				controlCodBarras(caja);
+			}
+		break;
+		
+		
+		case 'buscarProveedor':
+			// Solo venimos a esta accion cuando pulsamos intro cajaBusquedaproveedor
+			// entonce enviamos dedonde=popup, el buscar=Valor cja... que puede ser vacio.. 
+			var buscar = caja.darValor();
+			var dedonde = 'popup';
+			BuscarProveedor (dedonde,buscar)
+		break;
+		case 'mover_down':
+			// Controlamos si numero fila es correcto.
+			console.log(caja);
+			var nueva_fila = 0;
+			if ( isNaN(caja.fila) === false){
+				nueva_fila = parseInt(caja.fila)+1;
+			} 
+			console.log('mover_down:'+nueva_fila);
+			mover_down(nueva_fila,caja.darParametro('prefijo'));
+			
+		break;
+		case 'mover_up':
+			console.log( 'Accion subir 1 desde fila'+caja.fila);
+			var nueva_fila = 0;
+			
+			if ( isNaN(caja.fila) === false){
+				nueva_fila = parseInt(caja.fila)-1;
+			}
+			mover_up(nueva_fila,caja.darParametro('prefijo'));
+			
+		break;
+
+        default:
+            console.log( ' No hubo accion a realizar,accion pedida '+accion);
+        break;
+	}
+}
+
+function mover_up(fila,prefijo){
+	var d_focus = prefijo+fila;
+	ponerSelect(d_focus);
+}
+
+function mover_down(fila,prefijo){
+	var d_focus = prefijo+fila;
+	ponerSelect(d_focus);
+}
+
+function ponerSelect (destino_focus){
+	// @ Objetivo:
+	// 	Poner focus a donde nos indique el parametro, que debe ser id queremos apuntar.
+	console.log('Entro en ponerselects de :'+destino_focus);
+	setTimeout(function() {   //pongo un tiempo de focus ya que sino no funciona correctamente
+		jQuery('#'+destino_focus.toString()).select(); 
+	}, 50);
 }

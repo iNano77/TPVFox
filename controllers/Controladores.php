@@ -364,11 +364,14 @@ class ControladorComun
 		
 	}
 	function obtenerConfiguracion($conf_defecto,$nombre_modulo,$idUsuario){
-		//Objetivo:
-		//Obtener la configuracion del modulo.
-		//Tenienedo encuenta la configuracion por defecto del modulo y la configuracion que hay en la tabla modulo.
-		//nos quedamos con la de la tabla
-		//Aunque la compramos por si falta algun parametro configuracion por defecto, si falta deberíamos añadirlo.
+		// @ Objetivo:
+		//Obtener la configuracion del usuario, comparandola con la configuracion por defecto del modulo del xml
+        //y en la que hay en tabla modulos_configuracion que podemos encontrar la configuracion del modulo y usuario.
+		//Por lo que si añadimos un parametros configuracion al modulo, esta se añade al usuario.
+        // @ Parametros:
+        // $conf_defecto: Array con la configuracion del modulo obtenida del xml.
+        // @ Devolvemos:
+        // Array con al configuracion del usuario.
 
 		$respuesta = $conf_defecto;
 		$res = $this->obtenerConfiguracionModuloTabla($nombre_modulo,$idUsuario);
