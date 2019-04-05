@@ -10,10 +10,10 @@ Numero tecla:
 
 <parametros>
 	<configuracion>
-        <ruta nombre="sql" >/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/sql</ruta>
-        <ruta nombre="procesado">/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/procesados</ruta>
-        <ruta nombre="origen">/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/mdbs</ruta>
-        <ruta nombre="origen_fotos">/home/solucion40/www/Clientes/EnriqueElectronica/tpv_fox/datos/fotos_originales</ruta>
+        <ruta nombre="sql" >/home/tpv/datos/sql</ruta>
+        <ruta nombre="procesado">/home/tpv/datos/procesados</ruta>
+        <ruta nombre="origen">/home/tpv/datos/mdbs</ruta>
+        <ruta nombre="origen_fotos">/home/tpv/datos/fotos_originales</ruta>
 
 	</configuracion>
 	
