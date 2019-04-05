@@ -141,10 +141,8 @@ class alArticulosStocks extends ModeloP
             $resultado = alArticulosStocks::_update(alArticulosStocks::$tabla, [
                     'fechaRegularizacion' => date(FORMATO_FECHA_MYSQL)
                     , 'usuarioRegularizacion' => $idUsuario], ['id =' . self::getIdbyArticulo($idArticulo, $idTienda)]);
-<<<<<<< HEAD
-=======
+
         }
->>>>>>> parar proceso subir segundo mdb. paso de testigo
         return $resultado;
     }
 }
