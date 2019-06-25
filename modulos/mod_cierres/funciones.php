@@ -10,7 +10,7 @@ function ticketsPorFechaUsuario($fechaInicio,$BDTpv,$fechaFinal){
 	//Obtenemos los ticket Abiertos 
 	
 	//muestro datos del ticket donde fecha mayor fecha inicio y menor que nueva fecha (fecha+1)
-	$sql ='SELECT * FROM `ticketst` WHERE DATE_FORMAT(`Fecha`,"%d-%m-%Y") BETWEEN "'.$fechaInicio.'"'
+	$sql ='SELECT * FROM `ticketst` WHERE DATE_FORMAT(`Fecha`,"%Y-%m-%d") BETWEEN "'.$fechaInicio.'"'
 		.' AND "'.$fechaFinal.'" and `estado`="Cobrado"';
 	
 	$resp = $BDTpv->query($sql);
@@ -115,35 +115,46 @@ function InsertarProceso1Cierres($BDTpv,$datosCierre){
 	// 		3.1- Insert en tabla usuarios
 	$resultado=array();
 	$tabla = 'cierres';
-	$fecha_dmYHora = '%d-%m-%Y %H:%i:%s';
-	$fecha_dmY = '%d-%m-%Y';
+	
 	$idTienda = $datosCierre['tienda'];
 	$idUsuario = $datosCierre['idUsuarioLogin'];
+    $total = $datosCierre['totalcaja'];
+    $rangoTickets = '('.implode(',',$datosCierre['rangoTickets']).')'; // Montamos string con rango tickets
+    $fechaCierre = $datosCierre['fechaCierre'];	//('d-m-Y ');
+	$fechaCreacion =$datosCierre['fechaCreacion']; //('d-m-Y H:i:s');
+    // El tratamiento de fechas de inicio y final si las hacemos con UNIX y mucho mas comodo.
+    $FI_unix = $datosCierre['FI_unix'];
+    $FF_unix = $datosCierre['FF_unix'];
+    // --------------  Revisar, cambiar codigo y se puede eliminar   ------------- //
+    // Mantengo estas lineas ya no cambie el código.
+    $fecha_dmYHora = '%d-%m-%Y %H:%i:%s';
+	$fecha_dmY = '%d-%m-%Y';
 	$FechaInicio = $datosCierre['fechaInicio_tickets'];	//('d-m-Y H:i:s');
 	$FechaFinal = $datosCierre['fechaFinal_tickets'];	//('d-m-Y H:i:s');
-	$total = $datosCierre['totalcaja'];
-	$fechaCierre = $datosCierre['fechaCierre'];	//('d-m-Y ');
-	$fechaCreacion =$datosCierre['fechaCreacion']; //('d-m-Y H:i:s');
 	$fInicSinHora = $datosCierre['FinicioSINhora'];
 	$fFinalSinHora = $datosCierre['FfinalSINhora'];
-	$rangoTickets = '('.implode(',',$datosCierre['rangoTickets']).')'; // Montamos string con rango tickets	
-	//en mysql formato fecha es 'Y-m-d' y aqui trabajamos con 'd-m-Y'
+    //en mysql formato fecha es 'Y-m-d' y aqui trabajamos con 'd-m-Y'
 	//convierto fecha a string para insertar en cierres, formateo fecha para insertar sql
 	$formateoFechaInicio = ' STR_TO_DATE("'.$FechaInicio.'","'.$fecha_dmYHora.'") ';
 	$formateoFechaFinal = ' STR_TO_DATE("'.$FechaFinal.'","'.$fecha_dmYHora.'")  '; 
 	$formateoFechaCierre = ' STR_TO_DATE("'.$fechaCierre.'","'.$fecha_dmY.'") ';//fecha sin hora
 	$formateoFechaCreacion = ' STR_TO_DATE("'.$fechaCreacion.'","'.$fecha_dmYHora.'") ';//fecha sin hora
+    
+    // Las lineas anteriores su revisamos el código es innecesario.
+    // --------------  Fin bloque que se puede eliminar una vez revisado codigo.   ------------- //
+    
+	
 
 	$estadoCierre = 'Cerrado';
 	$insertCierre = 'INSERT INTO '.$tabla.' (idTienda, idUsuario, FechaInicio, FechaFinal, Total, FechaCierre, FechaCreacion) VALUES ("'
 			.$idTienda.'" , "'.$idUsuario.'" ,  '.$formateoFechaInicio.' , '.$formateoFechaFinal.' , '
 			.' "'.$total.'" , '.$formateoFechaCierre.' , '.$formateoFechaCreacion.' )';
     error_log($insertCierre);
-	//actualizar tickets estado = Cobrado a estado = Cerrado
+	//Cambiamos estado de tickets estado  lo pasamao a Cerrado
 	$updateEstado = 'UPDATE ticketst SET `estado`= "'.$estadoCierre.'" WHERE `estado` = "Cobrado"'
-					.' AND DATE_FORMAT(`Fecha`,"%d-%m-%Y") BETWEEN "'.$fInicSinHora.'"'
-					.' AND "'.$fFinalSinHora.'" AND id IN '.$rangoTickets;
-	//insertamos datos para cierre, si es correcto se Actualiza estado de tickets a 'Cerrado'
+					.' AND DATE_FORMAT(`Fecha`,"%Y-%m-%d") BETWEEN "'.strftime("%Y-%m-%d",$FI_unix).'"'
+					.' AND "'.strftime("%Y-%m-%d",$FF_unix).'" AND id IN '.$rangoTickets;
+	//Este update creo que le sobra intervalo de fechas , ya que ponemos rangotickets que son los tickets.
 	if ($BDTpv->query($insertCierre) === true){
 		$idCierre = $BDTpv->insert_id; //crea id en bbddd 
         $resultado['insertarCierre']='Correcto';
@@ -358,10 +369,12 @@ function ArrayFechaUnix ($Unix,$nombre){
 	$resultado = array();
 	$fecha_dmYHora = '%d-%m-%Y %H:%M:%S';
 	$fecha_dmY = '%d-%m-%Y';
+	$fecha_Ymd = '%Y-%m-%d';
 
 	$resultado[$nombre]['Epoch-Unix']=$Unix;
 	$resultado[$nombre]['String_d-m-y_hora'] = strftime($fecha_dmYHora,$Unix);
 	$resultado[$nombre]['String_d-m-y'] = strftime($fecha_dmY,$Unix);
+	$resultado[$nombre]['String_y-m-d'] = strftime($fecha_Ymd,$Unix);
 
 	$resultado[$nombre]['date'] = date_parse($resultado[$nombre]['String_d-m-y_hora']);
 
