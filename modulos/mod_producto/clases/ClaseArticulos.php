@@ -15,11 +15,22 @@ include_once 'ClaseArticulosStocks.php';
  *
  * @author alagoro
  */
-class alArticulos extends Modelo { // hereda de clase modelo. Hay una clase articulos que hizo Ricardo & Co.
-//    Si no se lee articulo por id, se leen múltiples articulos $pagina o menos
-// empezando en $inicio 
+// hereda de clase modelo. Hay una clase articulos que hizo Ricardo & Co.
+class alArticulos extends Modelo
+{ 
 
-    public function leer($idArticulo = 0, $inicio = 1, $pagina = 100) {
+    protected static $mitabla = 'articulos';
+
+/**
+ * Si no se lee articulo por id, se leen múltiples articulos $pagina o menos
+ * empezando en $inicio 
+ * @param int $idArticulo
+ * @param int $inicio
+ * @param int $pagina equivalente a offset
+ * @return array or false
+ */
+    public function leer($idArticulo = 0, $inicio = 1, $pagina = 100)
+    {
         $sql = 'SELECT * '
                 . 'FROM articulos ';
         if ($idArticulo != 0) {
@@ -42,6 +53,26 @@ class alArticulos extends Modelo { // hereda de clase modelo. Hay una clase arti
     }
 
  
+    public static function leerArticuloTienda($idArticuloTienda, $idTienda, $soloSQL = false)
+    {
+        $sql = 'SELECT art.idArticulo '
+            . ', art.iva as ivaArticulo '
+            . ', art.articulo_name as descripcion '
+            . ', pre.pvpSiva as pvptpv'
+            . ', stoc.stockOn as stocktpv' 
+            . ' FROM articulos AS art '
+            . ' LEFT OUTER JOIN articulosPrecios AS pre ON (art.idArticulo=pre.idArticulo) '
+            . ' LEFT OUTER JOIN articulosStocks AS stoc ON (art.idArticulo=stoc.idArticulo) '
+            . ' WHERE art.idArticulo =' . $idArticuloTienda
+            . ' AND pre.idTienda= ' . $idTienda
+            . ' AND stoc.idTienda= ' . $idTienda
+            . ' LIMIT 1';
+        if ($soloSQL === true) {
+            return $sql;
+        } else {
+            return ModeloP::_consulta($sql);
+        }
+    }
 
     public function leerPrecio($idArticulo, $idTienda = 1) {
         $sql = 'SELECT pre.* '
@@ -305,4 +336,15 @@ class alArticulos extends Modelo { // hereda de clase modelo. Hay una clase arti
         return $resultado;
     }
 
+    public static function insertar($datos, $soloSQL = FALSE)
+    {
+        $resultado = parent::_insert(self::$mitabla, $datos, $soloSQL);
+        return $resultado;
+    }
+
+    public static function actualizar($idArticulo, $datos, $soloSQL = false)
+    {
+        $resultado = parent::_update(self::$mitabla, $datos, ['idArticulo=' . $idArticulo], $soloSQL);
+        return $resultado;
+    }
 }
