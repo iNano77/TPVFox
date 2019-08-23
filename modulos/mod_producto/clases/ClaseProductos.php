@@ -79,7 +79,8 @@ class ClaseProductos extends ClaseTablaArticulos{
 				." ,aCodBarras.codBarras as codBarras,a.ultimoCoste,a.beneficio,a.iva,p.pvpSiva,p.pvpCiva,a.estado"
 				." FROM `articulos` AS a "
 				."LEFT JOIN `articulosPrecios` AS p "
-				."ON p.`idArticulo` = a.`idArticulo` "
+				."ON p.`idArticulo` = a.`idArticulo` AND "
+                ."(p.idTienda =".$this->idTienda.") "
 				."LEFT JOIN `articulosCodigoBarras` AS aCodBarras ON (aCodBarras.idArticulo = a.idArticulo)"
 				.$filtro;
                 break;
@@ -90,19 +91,29 @@ class ClaseProductos extends ClaseTablaArticulos{
 				." ,aCodBarras.codBarras as codBarras,a.ultimoCoste,a.beneficio,a.iva,p.pvpSiva,p.pvpCiva,a.estado"
 				." FROM `articulos` AS a "
 				."LEFT JOIN `articulosPrecios` AS p "
-				."ON p.`idArticulo` = a.`idArticulo` "
+				."ON p.`idArticulo` = a.`idArticulo` AND "
+                ."(p.idTienda =".$this->idTienda.") "
 				."LEFT JOIN `articulosCodigoBarras` AS aCodBarras ON (aCodBarras.idArticulo = a.idArticulo)"
 				.$filtro;
                 break;
                 
             case 't.idVirtuemart':
-				// Buscamos por Codbarras.
+				// Buscamos por idVirtuemart.
+                if ($this->SetPlugin('ClaseVirtuemart') !== false){
+                    $ObjVirtuemart = $this->SetPlugin('ClaseVirtuemart');
+                    $tiendaWeb=$ObjVirtuemart->getTiendaWeb();
+                    $idTiendaWeb = $tiendaWeb['idTienda'];
+                }
+
 				$consulta = "SELECT a.idArticulo,a.articulo_name as articulo_name"
 				." ,a.ultimoCoste,a.beneficio,a.iva,p.pvpSiva,p.pvpCiva,a.estado"
 				." FROM `articulos` AS a "
 				."LEFT JOIN `articulosPrecios` AS p "
-				."ON p.`idArticulo` = a.`idArticulo` "
-				."LEFT JOIN `articulosTiendas` AS t ON (t.idArticulo = a.idArticulo)"
+				."ON p.`idArticulo` = a.`idArticulo` AND "
+                ."(p.idTienda =".$this->idTienda.") "
+				."LEFT JOIN `articulosTiendas` AS t "
+                ."ON (t.idArticulo = a.idArticulo) AND "
+                ."(t.idTienda =". $idTiendaWeb.") "
 				.$filtro;
                 break;
 
@@ -356,9 +367,9 @@ class ClaseProductos extends ClaseTablaArticulos{
 			// Hubo resultados
 		} else {
 			// Quiere decir que hubo error en la consulta.
-			$respuesta['error'] = $DB->connect_errno;
+			$respuesta['error'] = $DB->error;
 			$error = array ( 'tipo'=>'danger',
-						 'mensaje' =>'Error al insertar en tabla Articulos '.json_encode($respuesta['error']),
+						 'mensaje' =>'Error al insertar en tabla Articulos: '.$respuesta['error'],
 						 'dato' => $sqlArticulo
 					);
 			$comprobaciones['insert_articulos'] = $error;
@@ -1017,6 +1028,13 @@ class ClaseProductos extends ClaseTablaArticulos{
         $consulta =$this->Consulta_insert_update($sql);
         return $consulta;
     }
+
+    public function EliminarCruceTienda($idCruce){
+        $sql='DELETE FROM articulosTiendas WHERE id='.$idCruce;
+        $consulta =$this->Consulta_insert_update($sql);
+        return $consulta;
+
+    }
 	
 	public function precioCivaRecalculado(){
 		// @ Objetivo
@@ -1052,6 +1070,8 @@ class ClaseProductos extends ClaseTablaArticulos{
              $items = parent::Consulta($consulta);
              if($items['Items'][0]['cant']>0){
                  $bandera=1;
+                 $resultado['consulta']=$consulta;
+                 $resultado['haydatos']=$items['Items'][0]['cant'];
                  break;
              }
         }

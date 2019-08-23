@@ -94,6 +94,7 @@ switch ($pulsado) {
         $productos= json_encode($idsWeb['datos']);
         $r =$CVirtuemart->enviarStockYPrecio($productos);
         $resultado = array ( 'elementos' => $r['Datos']['consulta1'],
+                             'elementos_precios' => $r['Datos']['consulta2'],
                              'actual'=> $inicial+ count($idsWeb['datos']) + 1,
                              'totalProductos' => $totalProductos
                             );
