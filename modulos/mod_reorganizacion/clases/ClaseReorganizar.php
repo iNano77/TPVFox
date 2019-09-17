@@ -51,13 +51,13 @@ class ClaseReorganizar extends TFModelo  {
 
         $sql = 'SELECT T.idArticulo, T.idVirtuemart, (' .
                     'SELECT IFNULL( stockOn, 0 ) ' .
-                    'FROM `articulosStocks AS S ' .
-                    'WHERE T.idArticulo = P.idArticulo ' .
+                    'FROM articulosStocks ' .
+                    'WHERE T.idArticulo = idArticulo ' .
                ') as stocksOn, ( ' .
                     'SELECT pvpSiva ' .
-                    'FROM `articulosPrecios` AS P ' .
-                    'WHERE T.idArticulo = P.idArticulo ' .
-               'FROM `articulosTienda` AS T ' .
+                    'FROM `articulosPrecios` ' .
+                    'WHERE T.idArticulo = idArticulo ) ' .
+               'FROM `articulosTiendas` AS T ' .
                'WHERE T.idTienda = ' . $this->idTiendaWeb .
                ' LIMIT ' . $inicio . ',' . $cantidad;
 
