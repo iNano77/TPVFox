@@ -49,7 +49,7 @@ foreach ($rutas['ruta'] as $r ){
 }
 
 $tablas = [
-    'categorias' => 'Categorias',
+//    'categorias' => 'Categorias',
 //    'dtocliente' => 'DtoCliente',
 //    'familiadto' => 'FamiliaDto',
     'articulos' => 'Articulos'

@@ -24,7 +24,14 @@ class ClaseEECategorias extends ModeloP
 
     public static function limpia()
     {
+        // Eliminamos datos de tabla antes importar
         $sql = 'DELETE FROM ' . self::$tabla;
+        return self::_consultaDML($sql);
+    }
+
+    public static function limpiaCategoria()
+    {
+        $sql = 'UPDATE `familiasTienda` SET `cRefTienda`="" WHERE `idTienda`=1';
         return self::_consultaDML($sql);
     }
 
@@ -32,6 +39,7 @@ class ClaseEECategorias extends ModeloP
     {
         if (file_exists($ficherosql)) {
             self::limpia();
+            self::limpiaCategoria();
             $errores = [];
             $contador = 0;
             $idProgreso = fusion::crear('categorias', $contador, $origenmdb);

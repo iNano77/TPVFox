@@ -38,12 +38,12 @@ class ClaseEEArticulos extends ModeloP {
         return self::_consultaDML($sql);
     }
 
-    private static function ActualizaEEFamilia() {
-        $sql = 'UPDATE modulo_eelectronica_articulos '
-                . ' JOIN familiasTienda ON (modulo_eelectronica_articulos.Cat=familiasTienda.cRefTienda) '
-                . ' SET modulo_eelectronica_articulos.idFamilia=familiasTienda.idFamilia';
-        return parent::_consultaDML($sql);
-    }
+    //~ private static function ActualizaEEFamilia() {
+        //~ $sql = 'UPDATE modulo_eelectronica_articulos '
+                //~ . ' JOIN familiasTienda ON (modulo_eelectronica_articulos.Cat=familiasTienda.cRefTienda) '
+                //~ . ' SET modulo_eelectronica_articulos.idFamilia=familiasTienda.idFamilia';
+        //~ return parent::_consultaDML($sql);
+    //~ }
 
     public static function importar($ficherosql, $origenmdb='') {
         $contador = 0;
@@ -78,13 +78,13 @@ class ClaseEEArticulos extends ModeloP {
             }
             fusion::finalizar($idProgreso);
             $idProgreso = fusion::crear('familias de articulos', $contador);
-            $actualiza = self::ActualizaEEFamilia();
-            if (!$actualiza) {
-                        registroSistema::crear('ClaseEEArticulos->importar', 'update--->'
-                                , ClaseEEArticulos::getSQLConsulta()
-                                , ClaseEEArticulos::getErrorConsulta());
-                $errores[] = ['update--->', ClaseEEArticulos::getErrorConsulta(), ClaseEEArticulos::getSQLConsulta()];
-            }
+            //~ $actualiza = self::ActualizaEEFamilia();
+            //~ if (!$actualiza) {
+                        //~ registroSistema::crear('ClaseEEArticulos->importar', 'update--->'
+                                //~ , ClaseEEArticulos::getSQLConsulta()
+                                //~ , ClaseEEArticulos::getErrorConsulta());
+                //~ $errores[] = ['update--->', ClaseEEArticulos::getErrorConsulta(), ClaseEEArticulos::getSQLConsulta()];
+            //~ }
             fusion::finalizar($idProgreso);
             return ($errores);
         }
@@ -156,19 +156,19 @@ class ClaseEEArticulos extends ModeloP {
                 if (count($articulotpv) > 0) {
                     $articulotpv = $articulotpv[0];
                     $actualizar = false;
-                    if (($articuloEE['idFamilia'] != 0) 
-                            && (!alArticulos::existeArticuloFamilia($idArticuloTienda, $articuloEE['idFamilia']))) {
-                        if (!alArticulos::borrarArticuloFamilia($idArticuloTienda, $articuloEE['idFamilia'])) {
-                            $errores[] = ['borrar Art fam', alArticulos::getErrorConsulta(), alArticulos::getSQLConsulta()];
-                        }
-                        if (!alArticulos::grabarArticuloFamilia($idArticuloTienda, $articuloEE['idFamilia'])) {
-                            $errores[] = ['insert Art fam', alArticulos::getErrorConsulta(), alArticulos::getSQLConsulta()];
-                        }
-                        $actualizar = true;
-                        registroSistema::crear(basename(__FILE__), 'fusionar articulos:SI existe CRef. idfamilia!=0'
-                            , 'consultaSQL'
-                            , 'erroresSQL');                        
-                    }
+                    //~ if (($articuloEE['idFamilia'] != 0) 
+                            //~ && (!alArticulos::existeArticuloFamilia($idArticuloTienda, $articuloEE['idFamilia']))) {
+                        //~ if (!alArticulos::borrarArticuloFamilia($idArticuloTienda, $articuloEE['idFamilia'])) {
+                            //~ $errores[] = ['borrar Art fam', alArticulos::getErrorConsulta(), alArticulos::getSQLConsulta()];
+                        //~ }
+                        //~ if (!alArticulos::grabarArticuloFamilia($idArticuloTienda, $articuloEE['idFamilia'])) {
+                            //~ $errores[] = ['insert Art fam', alArticulos::getErrorConsulta(), alArticulos::getSQLConsulta()];
+                        //~ }
+                        //~ $actualizar = true;
+                        //~ registroSistema::crear(basename(__FILE__), 'fusionar articulos:SI existe CRef. idfamilia!=0'
+                            //~ , 'consultaSQL'
+                            //~ , 'erroresSQL');                        
+                    //~ }
                     $md51 = self::calcularMD5([
                                 $articulotpv['ivaArticulo'],
                                 substr($articulotpv['descripcion'],0,100)
@@ -221,9 +221,9 @@ class ClaseEEArticulos extends ModeloP {
         return self::_leer(self::$tabla); //, '', [], [], 100);
     }
 
-    public static function leerFamilia($CatEE, $idTienda) {
-        $resultado = self::_consulta('SELECT idFamilia FROM familiasTienda WHERE ');
-        return self::_leer(self::$tabla);
-    }
+    //~ public static function leerFamilia($CatEE, $idTienda) {
+        //~ $resultado = self::_consulta('SELECT idFamilia FROM familiasTienda WHERE ');
+        //~ return self::_leer(self::$tabla);
+    //~ }
 
 }
