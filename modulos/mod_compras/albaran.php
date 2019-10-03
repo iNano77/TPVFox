@@ -36,6 +36,7 @@
 	$Datostotales=array();
 	$textoNum="";
 	$inciden=0;
+    $empleado=$Usuario['nombre'];
 	
 	//Cargamos la configuración por defecto y las acciones de las cajas 
 	$parametros = $ClasesParametros->getRoot();	
@@ -75,7 +76,7 @@
 			$pedidos=$datosAlbaran['pedidos'];
 			$textoNum=$idAlbaran;
 			$hora=$datosAlbaran['hora'];
-			
+			$empleado=$datosAlbaran['empleado'];
 			if($estado=="Facturado"){
 				$numFactura=$CAlb->NumfacturaDeAlbaran($idAlbaran);
 				if(isset($numFactura['error'])){
@@ -338,7 +339,7 @@
                 
                     <div class="col-md-4">
                         <strong>Empleado:</strong><br>
-                        <input type="text" id="Usuario" name="Usuario" value="<?php echo $Usuario['nombre'];?>" size="10" readonly>
+                        <input type="text" id="Usuario" name="Usuario" value="<?php echo $empleado;?>" size="10" readonly>
                     </div>
             </div>
             <div class="col-md-12">

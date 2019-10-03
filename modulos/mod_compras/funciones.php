@@ -1664,8 +1664,9 @@ function DatosIdAlbaran($id, $CAlb, $Cprveedor, $BDTpv){
 						'productos'=>$productos,
 						'DatosTotales'=>$Datostotales,
 						'pedidos'=>$pedidos,
-						'hora'=>$hora
-					);
+						'hora'=>$hora,
+                        'empleado'=>$datosAlbaran['idUsuario']
+                        );
 					return $respuesta;
 			}
 		}
