@@ -27,10 +27,18 @@ class ClaseConexion{
 	
 	public function conectar(){
 		
-		try{
+        try{
 			$db= new mysqli($this->server, $this->usuario,$this->contrasena, $this->base);
-			return $db;
-		}  catch (PDOException $e){
+            if ($db->connect_errno) {   
+                // Pudo haber un error
+                echo 'Error '.$db->connect_errno.':'.$db->connect_error;
+                
+                exit;
+            }
+            return $db;
+            
+		}
+        catch (PDOException $e){
 			echo "ERROR: No puedes conectarte a la base de datos";
 	
 		}
